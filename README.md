@@ -24,13 +24,13 @@ FlySphere is a full-stack airline booking and management system built using Angu
 - Backend Middleware Protection
 ---
 ## 📁 Project Structure
-
+```
 FlySphere/
 │
 ├── flysphere-frontend/        # Angular Application
 │
 └── flysphere-node-backend/    # Express Backend API
----
+```
 ## 🛠 Setup Instructions
 
 ### 1️⃣ Clone Repository
