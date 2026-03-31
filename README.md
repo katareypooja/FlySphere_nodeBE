@@ -93,3 +93,6 @@ Then create a Pull Request.
 
 Rahul Kumar Gupta  
 GitHub: https://github.com/buildwithrahulg
+
+## 🚀 Version 1.0 - Initial Release
+
