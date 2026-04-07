@@ -1,0 +1,132 @@
+/* ===== FlySphere Navbar & Branding ===== */
+
+/* Dark premium toolbar */
+.custom-toolbar {
+  background: linear-gradient(135deg, #4c51bf, #6d28d9);
+  color: white;
+  height: 70px;
+  padding: 0 24px;
+  box-shadow: 0 8px 22px rgba(76,81,191,0.45);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+/* Brand blue accent underline */
+.custom-toolbar::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: #3b82f6;
+}
+
+/* ===== Logo Styling ===== */
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: white;
+}
+
+.logo-icon {
+  height: 36px;
+  width: 36px;
+  fill: white;
+  filter: drop-shadow(0 0 4px rgba(255,255,255,0.5));
+  transform: rotate(40deg);
+  transition: transform 0.3s ease;
+}
+
+.logo-text-group {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.logo-text {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: white;
+}
+
+.logo-tagline {
+  font-size: 12px;
+  opacity: 0.85;
+  letter-spacing: 0.5px;
+  color: white;
+}
+
+/* Subtle premium hover */
+.logo-container:hover .logo-icon {
+  transform: rotate(40deg) translateY(-2px);
+}
+
+.logo-container:hover .logo-text {
+  opacity: 0.95;
+}
+
+/* ===== Navigation Buttons Styling ===== */
+
+.custom-toolbar button[mat-button] {
+  color: white !important;
+  position: relative;
+  padding: 6px 14px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+/* Hover glow effect */
+.custom-toolbar button[mat-button]:hover {
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 8px rgba(96, 165, 250, 0.6);
+}
+
+/* Smooth animated underline */
+.custom-toolbar button[mat-button]::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -4px;
+  width: 0;
+  height: 2px;
+  background: #60a5fa;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.custom-toolbar button[mat-button]:hover::after {
+  width: 60%;
+}
+
+/* Active pill style */
+.active-link {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+/* Profile icon white */
+.custom-toolbar button[mat-icon-button] {
+  color: white !important;
+}
+
+/* ===== Responsive Mobile ===== */
+
+@media (max-width: 768px) {
+  .custom-toolbar {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 10px 16px;
+  }
+
+  .custom-toolbar button[mat-button] {
+    margin-top: 6px;
+  }
+}

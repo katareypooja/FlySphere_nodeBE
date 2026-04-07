@@ -1,0 +1,99 @@
+/* ✅ Reused styles from booking page */
+
+.booking-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 40px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.booking-header-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.premium-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 22px;
+}
+
+.plane {
+  font-size: 20px;
+}
+
+.logo-text {
+  background: linear-gradient(90deg, #1e63ff, #00b3ff);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.tagline {
+  font-size: 12px;
+  color: #6c7a89;
+}
+
+.booking-steps {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.booking-steps .step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.booking-steps .step.active {
+  color: #1e3a8a;
+  font-weight: 600;
+}
+
+.booking-steps .circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  background: #ffffff;
+  color: #6b7280;
+}
+
+.booking-steps .step.active .circle {
+  background: #1e3a8a;
+  border-color: #1e3a8a;
+  color: #ffffff;
+}
+
+.step-line {
+  width: 40px;
+  height: 1.5px;
+  background: #e5e7eb;
+}
+
+.support-btn {
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: none;
+  background: #f1f5ff;
+  color: #2563eb;
+  font-weight: 600;
+  cursor: pointer;
+}

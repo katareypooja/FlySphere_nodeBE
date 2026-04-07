@@ -1,0 +1,271 @@
+<div class="page-header">
+  <h2>Flight Configuration</h2>
+  <p class="page-subtitle">
+    Configure flight schedule, pricing and seat allocation
+  </p>
+</div>
+
+<form [formGroup]="flightForm" (ngSubmit)="onSubmit()" class="create-flight-form">
+
+  <!-- ✅ MAIN TWO-COLUMN LAYOUT -->
+  <div class="main-layout">
+
+    <!-- ================= LEFT COLUMN ================= -->
+    <div>
+
+      <!-- ✈ Flight Information -->
+      <div class="section-card">
+        <h3 class="section-title">
+          <mat-icon class="section-icon">flight_takeoff</mat-icon>
+          Flight Information
+        </h3>
+
+        <div class="flight-info-row">
+          <mat-form-field appearance="outline" class="premium-airline-select">
+            <mat-label>Airline</mat-label>
+            <mat-select formControlName="AirlineName">
+
+              <ng-container *ngFor="let group of airlines">
+                <mat-optgroup [label]="group.category">
+
+                  <mat-option *ngFor="let airline of group.list"
+                              [value]="airline.name">
+                    {{ airline.name }}
+                  </mat-option>
+
+                </mat-optgroup>
+              </ng-container>
+
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Flight Type</mat-label>
+            <mat-select formControlName="FlightType">
+              <mat-option value="Airbus A320">Airbus A320</mat-option>
+              <mat-option value="Boeing 737">Boeing 737</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- ✈ Departure / Arrival -->
+      <div class="section-card">
+        <div class="flight-columns">
+
+          <!-- Departure -->
+          <div>
+            <h3 class="section-title">
+              <mat-icon class="section-icon">flight_takeoff</mat-icon>
+              Departure
+            </h3>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Departure Airport</mat-label>
+              <mat-select formControlName="DepartureAirport">
+                <mat-option *ngFor="let airport of airports" [value]="airport.code">
+                  {{ airport.name }} ({{ airport.code }})
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Departure Date</mat-label>
+              <input matInput [matDatepicker]="depPicker" formControlName="DepartureDate" [min]="today">
+              <mat-datepicker-toggle matIconSuffix [for]="depPicker"></mat-datepicker-toggle>
+              <mat-datepicker #depPicker></mat-datepicker>
+            </mat-form-field>
+
+            <!-- ✅ Compact Departure Time Row -->
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px;">
+              <mat-form-field appearance="outline">
+                <mat-label>Hour</mat-label>
+                <mat-select formControlName="DepartureHour">
+                  <mat-option *ngFor="let h of [].constructor(12); let i = index"
+                              [value]="i + 1">
+                    {{ (i + 1) < 10 ? '0' + (i + 1) : (i + 1) }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Minute</mat-label>
+                <mat-select formControlName="DepartureMinute">
+                  <mat-option *ngFor="let m of [].constructor(60); let i = index"
+                              [value]="i < 10 ? '0' + i : i">
+                    {{ i < 10 ? '0' + i : i }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>AM/PM</mat-label>
+                <mat-select formControlName="DeparturePeriod">
+                  <mat-option value="AM">AM</mat-option>
+                  <mat-option value="PM">PM</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Duration (minutes)</mat-label>
+              <input matInput type="number" formControlName="DurationMinutes" min="1">
+            </mat-form-field>
+          </div>
+
+          <!-- Arrival -->
+          <div>
+            <h3 class="section-title">
+              <mat-icon class="section-icon">flight_land</mat-icon>
+              Arrival
+            </h3>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Arrival Airport</mat-label>
+              <mat-select formControlName="ArrivalAirport">
+                <mat-option *ngFor="let airport of airports" [value]="airport.code">
+                  {{ airport.name }} ({{ airport.code }})
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Arrival Date</mat-label>
+              <input matInput [matDatepicker]="arrPicker" formControlName="ArrivalDate" [min]="today">
+              <mat-datepicker-toggle matIconSuffix [for]="arrPicker"></mat-datepicker-toggle>
+              <mat-datepicker #arrPicker></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Arrival Time</mat-label>
+              <input matInput formControlName="ArrivalTime" readonly>
+            </mat-form-field>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================= RIGHT COLUMN (PRICING) ================= -->
+    <div class="section-card">
+
+      <h3 class="section-title">
+        <mat-icon class="section-icon">payments</mat-icon>
+        Pricing Details
+      </h3>
+
+      <div class="pricing-grid">
+
+        <!-- Economy -->
+        <div class="pricing-column">
+          <h4>Economy</h4>
+
+          <div class="sub-section-title">Fares</div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Adult Fare</mat-label>
+            <input matInput type="number" formControlName="EconomyAdultFare">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Child Fare</mat-label>
+            <input matInput type="number" formControlName="EconomyChildFare">
+          </mat-form-field>
+
+        </div>
+
+        <!-- Business -->
+        <div class="pricing-column">
+          <h4>Business</h4>
+
+          <div class="sub-section-title">Fares</div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Adult Fare</mat-label>
+            <input matInput type="number" formControlName="BusinessAdultFare">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Child Fare</mat-label>
+            <input matInput type="number" formControlName="BusinessChildFare">
+          </mat-form-field>
+
+        </div>
+
+        <!-- First -->
+        <div class="pricing-column">
+          <h4>First Class</h4>
+
+          <div class="sub-section-title">Fares</div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Adult Fare</mat-label>
+            <input matInput type="number" formControlName="FirstAdultFare">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Child Fare</mat-label>
+            <input matInput type="number" formControlName="FirstChildFare">
+          </mat-form-field>
+
+        </div>
+
+      </div>
+
+
+    </div>
+
+    <!-- 🪑 Seat Availability -->
+    <div class="section-card">
+
+      <h3 class="section-title">
+        <mat-icon class="section-icon">event_seat</mat-icon>
+        Seat Availability
+      </h3>
+
+      <div class="pricing-grid">
+
+        <div class="pricing-column">
+          <h4>Economy</h4>
+          <mat-form-field appearance="outline">
+            <mat-label>Total Seats</mat-label>
+            <input matInput type="number" formControlName="TotalEconomySeats">
+          </mat-form-field>
+        </div>
+
+        <div class="pricing-column">
+          <h4>Business</h4>
+          <mat-form-field appearance="outline">
+            <mat-label>Total Seats</mat-label>
+            <input matInput type="number" formControlName="TotalBusinessSeats">
+          </mat-form-field>
+        </div>
+
+        <div class="pricing-column">
+          <h4>First Class</h4>
+          <mat-form-field appearance="outline">
+            <mat-label>Total Seats</mat-label>
+            <input matInput type="number" formControlName="TotalFirstClassSeats">
+          </mat-form-field>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ✅ Final Submit Section -->
+    <div class="section-card submit-section">
+      <button
+        mat-flat-button
+        color="accent"
+        type="submit"
+        class="submit-btn">
+        <mat-icon>check_circle</mat-icon>
+        Create Flight
+      </button>
+    </div>
+
+  </div>
+
+</form>

@@ -49,7 +49,54 @@
 
         <div class="form-group">
           <label class="input-label">Phone Number*</label>
-          <input type="text" [(ngModel)]="phone" name="phone" required />
+          
+          <div class="phone-wrapper">
+
+            <div class="country-dropdown">
+
+              <div class="selected-country"
+                   (click)="toggleCountryDropdown()">
+                <img *ngIf="selectedCountry"
+                     [src]="selectedCountry.flag"
+                     width="20"
+                     height="14"
+                     style="margin-right:6px; vertical-align:middle;" />
+                {{ countryCode }} ▼
+              </div>
+
+              <div class="dropdown-menu"
+                   *ngIf="showCountryDropdown">
+
+                <input
+                  type="text"
+                  placeholder="Search country..."
+                  [(ngModel)]="countrySearch"
+                  class="country-search"/>
+
+                <div class="country-option"
+                     *ngFor="let country of filteredCountries"
+                     (click)="selectCountry(country)">
+                  <img [src]="country.flag"
+                       width="20"
+                       height="14"
+                       style="margin-right:6px; vertical-align:middle;" />
+                  {{ country.name }} ({{ country.code }})
+                </div>
+
+              </div>
+            </div>
+
+            <input 
+              type="tel" 
+              [(ngModel)]="phone" 
+              name="phone" 
+              inputmode="numeric"
+              maxlength="12"
+              (input)="onPhoneInput($event)"
+              (keydown)="onPhoneKeyDown($event)"
+              (paste)="onPhonePaste($event)"
+              required />
+          </div>
         </div>
 
       </div>

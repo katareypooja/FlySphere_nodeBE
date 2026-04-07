@@ -1,0 +1,92 @@
+<div class="review-wrapper" *ngIf="bookingData">
+
+  <!-- ✅ STEP PROGRESS HEADER -->
+  <div class="step-progress">
+    <div class="step-item completed">
+      <div class="circle">1</div>
+      <span>Booking</span>
+    </div>
+    <div class="line completed-line"></div>
+    <div class="step-item active">
+      <div class="circle">2</div>
+      <span>Review</span>
+    </div>
+    <div class="line"></div>
+    <div class="step-item">
+      <div class="circle">3</div>
+      <span>Confirmation</span>
+    </div>
+  </div>
+
+  <div class="review-layout">
+
+    <!-- ✅ LEFT SUMMARY -->
+    <div class="summary-card">
+
+      <h3>{{ bookingData.departCity }} → {{ bookingData.arriveCity }}</h3>
+      <p>{{ bookingData.airline }} • {{ bookingData.fare?.name }}</p>
+
+      <hr>
+
+      <h4>Passengers</h4>
+
+      <div *ngFor="let p of passengers" class="passenger-summary">
+        <strong>{{ p.title }} {{ p.firstName }} {{ p.lastName }}</strong>
+        <span>{{ p.type | titlecase }} (Age {{ p.age }})</span>
+
+        <div class="addons">
+          <span *ngIf="p.seatPreference">Seat: {{ p.seatPreference | titlecase }}</span>
+          <span *ngIf="p.mealPreference">Meal: {{ p.mealPreference | titlecase }}</span>
+          <span *ngIf="p.baggage">Extra Baggage</span>
+        </div>
+      </div>
+
+      <hr>
+
+      <h4>Contact</h4>
+      <p>{{ contact?.email }}</p>
+      <p>{{ contact?.phone }}</p>
+
+    </div>
+
+    <!-- ✅ RIGHT PRICING -->
+    <div class="price-card">
+
+      <h3>Payment Summary</h3>
+
+      <div class="row">
+        <span>Base Fare</span>
+        <span>₹ {{ totals?.baseTotal | number:'1.0-0' }}</span>
+      </div>
+
+      <div class="row">
+        <span>Add-ons</span>
+        <span>₹ {{ totals?.addonsTotal | number:'1.0-0' }}</span>
+      </div>
+
+      <div class="row">
+        <span>Taxes</span>
+        <span>₹ {{ totals?.taxAmount | number:'1.0-0' }}</span>
+      </div>
+
+      <div class="row">
+        <span>Convenience Fee</span>
+        <span>₹ {{ totals?.convenienceFee | number:'1.0-0' }}</span>
+      </div>
+
+      <hr>
+
+      <div class="row grand">
+        <span>Total Payable</span>
+        <span>₹ {{ totals?.grandTotal | number:'1.0-0' }}</span>
+      </div>
+
+      <button class="confirm-btn" (click)="confirmBooking()">
+        Confirm Booking
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

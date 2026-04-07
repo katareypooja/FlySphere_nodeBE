@@ -1,0 +1,489 @@
+/* ================= PREMIUM BOOKING HEADER ================= */
+
+.booking-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 40px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  animation: fadeHeader 0.5s ease-in-out;
+}
+
+.booking-header-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.premium-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.plane {
+  animation: floatPlane 2.5s ease-in-out infinite;
+  font-size: 20px;
+}
+
+.logo-text {
+  background: linear-gradient(90deg, #1e63ff, #00b3ff);
+
+  /* ✅ Standard + WebKit compatibility */
+  background-clip: text;
+  -webkit-background-clip: text;
+
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.tagline {
+  font-size: 12px;
+  color: #6c7a89;
+  letter-spacing: 0.5px;
+}
+
+.booking-steps {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+/* ✅ Clean minimal step */
+.booking-steps .step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.booking-steps .step.active {
+  color: #1e3a8a;
+  font-weight: 600;
+}
+
+.booking-steps .circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  background: #ffffff;
+  color: #6b7280;
+}
+
+.booking-steps .step.active .circle {
+  background: #1e3a8a;
+  border-color: #1e3a8a;
+  color: #ffffff;
+}
+
+.step-line {
+  width: 40px;
+  height: 1.5px;
+  background: #e5e7eb;
+}
+
+.support-btn {
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: none;
+  background: #f1f5ff;
+  color: #2563eb;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.support-btn:hover {
+  background: #e0ecff;
+}
+
+/* Header animations */
+@keyframes floatPlane {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes fadeHeader {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.booking-wrapper {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 20px;
+  min-height: 100vh; /* ✅ Prevent layout jump on navigation */
+  display: block;
+}
+
+/* ✅ Step Progress Header */
+.step-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 50px;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  font-weight: 500;
+  color: #94a3b8;
+}
+
+.step-item .circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid #dbeafe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  background: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.step-item.active .circle {
+  background: linear-gradient(90deg, #3b82f6, #2563eb);
+  color: #ffffff;
+  border-color: #2563eb;
+  box-shadow: 0 8px 20px rgba(37,99,235,0.35);
+}
+
+.step-item span {
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.step-item.active span {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.step-progress .line {
+  width: 90px;
+  height: 2px;
+  background: #e2e8f0;
+  position: relative;
+  top: -12px;
+}
+
+/* ✅ Step Indicator */
+.step-indicator {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.step {
+  flex: 1;
+  text-align: center;
+  padding: 12px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  font-weight: 600;
+  margin: 0 5px;
+}
+
+.step.active {
+  background: linear-gradient(90deg, #3b82f6, #2563eb);
+  color: #ffffff;
+}
+
+/* ✅ Main Layout */
+.booking-layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 40px;
+  align-items: start; /* ✅ Stabilize grid alignment */
+}
+
+/* ✅ Fare Panel */
+.fare-panel {
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+}
+
+.fare-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+}
+
+.airline {
+  color: #64748b;
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+.price-breakdown .row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.grand-total {
+  font-size: 18px;
+  font-weight: 800;
+  color: #2563eb;
+}
+
+/* ✅ Details Panel */
+.details-panel {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 28px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+}
+
+/* ✅ Validation Error Banner */
+.error-banner {
+  background: #fff1f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  padding: 14px 18px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.error-banner ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.details-panel h2 {
+  margin-bottom: 24px;
+}
+
+/* ✅ Passenger Card */
+.passenger-card {
+  margin-bottom: 24px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+}
+
+.passenger-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.badge {
+  margin-left: 10px;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.badge.adult {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.badge.child {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.remove-btn {
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  cursor: pointer;
+  color: #dc2626;
+}
+
+/* ✅ Forms */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.form-grid input,
+.form-grid select {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  font-size: 14px;
+  outline: none;
+}
+
+.form-grid input:focus,
+.form-grid select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37,99,235,0.15);
+}
+
+/* ✅ Add-ons Layout Fix */
+.addons-section {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.addons-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.addon-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.addon-item label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.addon-item select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 14px;
+}
+
+.addon-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  margin-top: 10px;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.addon-row .left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+}
+
+.addon-row .right {
+  font-weight: 600;
+  color: #2563eb;
+}
+
+.insurance-section {
+  margin-top: 20px;
+}
+
+/* ✅ Buttons */
+.add-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 999px;
+  border: 1px dashed #2563eb;
+  background: #f1f5ff;
+  color: #2563eb;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 24px 0;
+  text-align: center;
+}
+
+.add-btn:hover:not(:disabled) {
+  background: #e0ecff;
+}
+
+.add-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.action-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.continue-btn {
+  width: 240px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  background: #1e3a8a;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.continue-btn:hover {
+  background: #172554;
+  transform: translateY(-1px);
+}
+
+/* ✅ Responsive */
+@media (max-width: 992px) {
+  .booking-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .fare-panel {
+    position: relative;
+    top: auto;
+  }
+}
+
+/* ✅ Invalid Field Highlight */
+.invalid-field {
+  border: 2px solid #e53935 !important;
+  background-color: #fff5f5;
+  box-shadow: 0 0 0 1px rgba(229, 57, 53, 0.2);
+}
+
+.field-error {
+  font-size: 12px;
+  color: #e53935;
+  margin-top: 4px;
+}
+
+/* ✅ Shake Animation */
+.shake {
+  animation: shakeX 0.35s ease-in-out;
+}
+
+@keyframes shakeX {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+  100% { transform: translateX(0); }
+}

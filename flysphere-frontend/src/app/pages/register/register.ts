@@ -19,7 +19,89 @@ export class Register {
   firstName = '';
   middleName = '';
   lastName = '';
+  countryCode = '+91';
   phone = '';
+
+  showCountryDropdown = false;
+  countrySearch = '';
+
+  countries = [
+    { name: 'India', code: '+91', flag: 'https://flagcdn.com/w20/in.png', length: 10 },
+    { name: 'United States', code: '+1', flag: 'https://flagcdn.com/w20/us.png', length: 10 },
+    { name: 'United Kingdom', code: '+44', flag: 'https://flagcdn.com/w20/gb.png', length: 10 },
+    { name: 'Australia', code: '+61', flag: 'https://flagcdn.com/w20/au.png', length: 9 },
+    { name: 'United Arab Emirates', code: '+971', flag: 'https://flagcdn.com/w20/ae.png', length: 9 },
+    { name: 'Japan', code: '+81', flag: 'https://flagcdn.com/w20/jp.png', length: 10 },
+    { name: 'Germany', code: '+49', flag: 'https://flagcdn.com/w20/de.png', length: 11 },
+    { name: 'France', code: '+33', flag: 'https://flagcdn.com/w20/fr.png', length: 9 },
+    { name: 'Canada', code: '+1', flag: 'https://flagcdn.com/w20/ca.png', length: 10 },
+    { name: 'Singapore', code: '+65', flag: 'https://flagcdn.com/w20/sg.png', length: 8 }
+  ];
+
+  get filteredCountries() {
+    return this.countries.filter(c =>
+      c.name.toLowerCase().includes(this.countrySearch.toLowerCase()) ||
+      c.code.includes(this.countrySearch)
+    );
+  }
+
+  toggleCountryDropdown() {
+    this.showCountryDropdown = !this.showCountryDropdown;
+  }
+
+  selectCountry(country: any) {
+    this.countryCode = country.code;
+    this.showCountryDropdown = false;
+    this.countrySearch = '';
+  }
+
+  get selectedCountry() {
+    return this.countries.find(c => c.code === this.countryCode);
+  }
+
+  onPhoneInput(event: any) {
+    const digits = event.target.value.replace(/[^0-9]/g, '');
+    const maxLength = this.selectedCountry?.length || 12;
+    const trimmed = digits.slice(0, maxLength);
+
+    if (this.countryCode === '+91' && trimmed.length > 5) {
+      this.phone = trimmed.slice(0, 5) + ' ' + trimmed.slice(5);
+    } else {
+      this.phone = trimmed;
+    }
+  }
+
+  onPhoneKeyDown(event: KeyboardEvent) {
+    const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
+
+    if (allowedKeys.includes(event.key)) return;
+
+    if (!/^[0-9]$/.test(event.key)) {
+      event.preventDefault();
+    }
+  }
+
+  onPhonePaste(event: ClipboardEvent) {
+    const pasted = event.clipboardData?.getData('text') || '';
+    if (!/^\d+$/.test(pasted)) {
+      event.preventDefault();
+    }
+  }
+
+  get isPhoneLengthValid(): boolean {
+    const expected = this.selectedCountry?.length;
+    if (!expected) return true;
+    return this.phone.replace(/\s/g, '').length === expected;
+  }
+
+  ngOnInit() {
+    document.addEventListener('click', (event: any) => {
+      const clickedInside = event.target.closest('.country-dropdown');
+      if (!clickedInside) {
+        this.showCountryDropdown = false;
+      }
+    });
+  }
   email = '';
   password = '';
   confirmPassword = '';
@@ -97,11 +179,13 @@ export class Register {
       return;
     }
 
+    const formattedPhone = (this.countryCode + this.phone).replace(/\s+/g, '');
+
     this.auth.register({
       userId: this.userId,
       firstName: this.firstName,
       lastName: this.lastName,
-      phone: this.phone,
+      phone: formattedPhone,
       email: this.email,
       password: this.password
     }).subscribe({

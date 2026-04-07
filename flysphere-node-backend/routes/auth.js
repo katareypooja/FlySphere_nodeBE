@@ -45,6 +45,14 @@ router.post('/register', async (req, res) => {
     });
   }
 
+  // ✅ International Phone Validation (+ followed by 7–15 digits)
+  const phoneRegex = /^\+\d{7,15}$/;
+  if (!phoneRegex.test(phone)) {
+    return res.status(400).json({
+      error: 'Invalid international phone number format'
+    });
+  }
+
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -87,7 +95,11 @@ router.post('/login', async (req, res) => {
       { expiresIn: '1h' }
     );
 
-    res.json({ message: '✅ Login successful', token });
+    res.json({ 
+      message: '✅ Login successful', 
+      token,
+      role: user.role
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Login failed' });

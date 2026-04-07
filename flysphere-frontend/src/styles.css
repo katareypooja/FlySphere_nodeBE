@@ -2,11 +2,25 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
+html, body {
+  height: 100%;
+}
+
+html {
+  overflow-y: scroll;
+}
+
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
   background: linear-gradient(rgba(0, 70, 140, 0.6), rgba(0, 70, 140, 0.6)),
               url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e') no-repeat center center/cover;
+  min-height: 100vh;
+  /* ✅ Single scroll container maintained on html only */
+}
+
+/* ✅ Center only auth pages */
+.auth-wrapper {
   min-height: 100vh;
   display: flex;
   justify-content: center;

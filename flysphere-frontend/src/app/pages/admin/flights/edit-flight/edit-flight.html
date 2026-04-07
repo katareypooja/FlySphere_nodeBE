@@ -1,0 +1,58 @@
+<div class="edit-container">
+  <h2>Update Scheduled Flight</h2>
+
+  <form (ngSubmit)="updateFlight()">
+
+    <div class="form-grid">
+
+      <label>Airline Name</label>
+      <input type="text" [(ngModel)]="flight.airlinename" name="airlinename" required disabled>
+
+      <label>Flight Type</label>
+      <input type="text" [(ngModel)]="flight.flighttype" name="flighttype" required>
+
+      <label>Flight Number</label>
+      <input type="text" [(ngModel)]="flight.flightno" name="flightno" required disabled>
+
+      <label>Departure Airport</label>
+      <input type="text" [(ngModel)]="flight.departureairport" name="departureairport" required disabled>
+
+      <label>Arrival Airport</label>
+      <input type="text" [(ngModel)]="flight.arrivalairport" name="arrivalairport" required disabled>
+
+      <label>Departure Date</label>
+      <input type="date" [(ngModel)]="flight.departuredate" name="departuredate" (ngModelChange)="onDepartureChange()" required>
+
+      <label>Arrival Date</label>
+      <input type="date" [(ngModel)]="flight.arrivaldate" name="arrivaldate" [readonly]="true" required>
+
+      <label>Departure Time</label>
+      <input type="time" [(ngModel)]="flight.departuretime" name="departuretime" (ngModelChange)="onDepartureChange()" required>
+
+      <label>Arrival Time</label>
+      <input type="time" [(ngModel)]="flight.arrivaltime" name="arrivaltime" [readonly]="true" required>
+
+      <label>Economy Adult Fare</label>
+      <input type="number" [(ngModel)]="flight.economyadultfare" name="economyadultfare" required>
+
+      <label>Economy Child Fare</label>
+      <input type="number" [(ngModel)]="flight.economychildfare" name="economychildfare" required>
+
+      <label>Business Adult Fare</label>
+      <input type="number" [(ngModel)]="flight.businessadultfare" name="businessadultfare" required>
+
+      <label>Business Child Fare</label>
+      <input type="number" [(ngModel)]="flight.businesschildfare" name="businesschildfare" required>
+
+      <label>First Adult Fare</label>
+      <input type="number" [(ngModel)]="flight.firstadultfare" name="firstadultfare" required>
+
+      <label>First Child Fare</label>
+      <input type="number" [(ngModel)]="flight.firstchildfare" name="firstchildfare" required>
+
+    </div>
+
+    <button type="submit" class="update-btn">Update Scheduled Flight</button>
+
+  </form>
+</div>

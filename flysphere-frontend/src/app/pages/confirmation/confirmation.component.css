@@ -1,0 +1,154 @@
+.confirmation-wrapper {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  text-align: center;
+}
+
+/* ✅ Step Progress */
+.step-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #94a3b8;
+}
+
+.circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+  font-weight: 600;
+  background: #ffffff;
+}
+
+.step-item.completed .circle {
+  background: #16a34a;
+  color: #ffffff;
+  border-color: #16a34a;
+}
+
+.step-item.active .circle {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
+.line {
+  width: 80px;
+  height: 2px;
+  background: #e2e8f0;
+  margin: 0 14px;
+}
+
+.completed-line {
+  background: #16a34a;
+}
+
+/* ✅ Success Animation */
+.success-container {
+  margin-bottom: 30px;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.checkmark-circle {
+  width: 90px;
+  height: 90px;
+  background: #16a34a;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  position: relative;
+  animation: pop 0.4s ease-out;
+}
+
+.checkmark {
+  position: absolute;
+  left: 28px;
+  top: 45px;
+  width: 25px;
+  height: 12px;
+  border-left: 4px solid white;
+  border-bottom: 4px solid white;
+  transform: rotate(-45deg);
+}
+
+@keyframes pop {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ✅ Booking ID */
+.booking-id-card {
+  background: #f1f5ff;
+  border-radius: 14px;
+  padding: 20px;
+  margin: 20px auto;
+}
+
+.booking-id-card h1 {
+  font-size: 32px;
+  color: #2563eb;
+  margin-top: 10px;
+}
+
+/* ✅ Summary */
+.summary-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+  margin-top: 20px;
+}
+
+.summary-card .total {
+  font-weight: 700;
+  font-size: 18px;
+  margin-top: 10px;
+  color: #16a34a;
+}
+
+/* ✅ Buttons */
+.action-buttons {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.print-btn,
+.home-btn {
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.print-btn {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.home-btn {
+  background: #e2e8f0;
+}
+
+.print-btn:hover {
+  background: #1e40af;
+}

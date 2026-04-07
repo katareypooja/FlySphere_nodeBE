@@ -1,0 +1,248 @@
+/* ===== Flights List – Clean Final Structured Layout ===== */
+
+.flights-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.header-subtitle {
+  margin-top: 6px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.3px;
+}
+
+.filter-bar.vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.flights-header h2 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  position: relative;
+}
+
+.flights-header h2::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 3px;
+  margin-top: 8px;
+  background: linear-gradient(to right, #38bdf8, #6366f1);
+  border-radius: 4px;
+}
+
+/* ================= FILTER BAR ================= */
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.search-box {
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 25px;
+  border: 1px solid #d1d5db;
+  width: 260px;
+  font-size: 14px;
+  outline: none;
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.search-box:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.status-filter {
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 25px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  min-width: 200px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #1e3a8a;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* ================= TABLE STRUCTURE ================= */
+
+.flights-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* ---- LOCKED COLUMN WIDTHS ---- */
+
+.mat-column-flightno { width: 80px; }
+.mat-column-airlinename { width: auto; }
+.mat-column-departure { width: 150px; }
+.mat-column-arrival { width: 150px; }
+.mat-column-flighttype { width: 100px; }
+.mat-column-economy,
+.mat-column-business,
+.mat-column-first { width: 115px; }
+.mat-column-flightstatus { width: 120px; text-align: center; }
+.mat-column-actions { width: 150px; text-align: center; }
+
+/* ================= CELL STABILITY ================= */
+
+::ng-deep .mat-mdc-cell {
+  font-size: 13px;
+  padding: 6px 6px;
+  vertical-align: middle;
+  font-weight: 400;
+  background: transparent;
+  color: #1f2937;
+}
+
+::ng-deep .mat-mdc-header-cell {
+  font-size: 13px;
+  padding: 10px 6px;
+  font-weight: 600;
+  background: linear-gradient(to bottom, #f3f4f6, #e5e7eb);
+  color: #111827;
+  border-bottom: 1px solid #d1d5db;
+}
+
+::ng-deep .mat-mdc-row {
+  height: 88px;
+}
+
+/* ================= DEPARTURE / ARRIVAL ================= */
+
+.cell-block {
+  min-height: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+
+.cell-line.strong {
+  font-weight: 500;
+  color: #0f172a;
+  font-size: 14px;
+}
+
+.cell-line.muted {
+  color: #55607a;
+  font-size: 13px;
+}
+
+/* ================= PRICING BLOCK ================= */
+
+.fare-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* ✅ Seat row alignment fix */
+.fare-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fare-row .seat-icon {
+  font-size: 18px;
+  width: 22px;        /* fixed width for perfect alignment */
+  text-align: center;
+}
+
+.fare-row:last-child {
+  justify-content: flex-start;
+}
+
+.fare-row {
+  font-size: 13px;
+  line-height: 16px;
+  margin: 0;
+  padding: 0;
+}
+
+.fare-value {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ================= STATUS BADGES ================= */
+
+.status-badge {
+  min-width: 100px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  color: white;
+  display: inline-block;
+}
+
+.status-scheduled { background-color: #2563eb; }
+.status-delayed { background-color: #f59e0b; }
+.status-rescheduled { background-color: #8b5cf6; }
+.status-departed { background-color: #0ea5e9; }
+.status-completed { background-color: #15803d; }
+.status-cancelled { background-color: #ef4444; }
+
+/* ================= ACTIONS ================= */
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.action-buttons button {
+  flex-shrink: 0;
+}
+
+/* ================= HOVER ================= */
+
+::ng-deep .mat-mdc-row:hover {
+  background-color: #f0f7ff;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 768px) {
+
+  .flights-table { display: none; }
+
+  .mobile-cards {
+    display: block;
+    padding-top: 12px;
+  }
+
+}
+
+.mobile-cards { display: none; }
+
+.flight-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}

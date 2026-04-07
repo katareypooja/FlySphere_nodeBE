@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@angular/animations": "^21.2.7",
+    "@angular/cdk": "^21.2.5",
+    "@angular/material": "^21.2.5",
+    "pdfkit": "^0.18.0",
+    "typescript": "^6.0.2"
+  }
+}

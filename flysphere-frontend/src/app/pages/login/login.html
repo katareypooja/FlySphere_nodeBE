@@ -1,22 +1,23 @@
-<div class="auth-layout">
+<div class="auth-wrapper">
+  <div class="auth-layout">
 
-  <!-- ✅ LEFT BRANDING SIDE -->
-  <div class="brand-side">
-    <h1 class="brand-title">✈ FlySphere</h1>
-    <p class="brand-slogan">Your Journey Begins Here</p>
+    <!-- ✅ LEFT BRANDING SIDE -->
+    <div class="brand-side">
+      <h1 class="brand-title">✈ FlySphere</h1>
+      <p class="brand-slogan">Your Journey Begins Here</p>
 
-    <div class="promo-banner">
-      🔥 Flat 30% OFF on First Booking
-      <span>Use Code: FLY30</span>
+      <div class="promo-banner">
+        🔥 Flat 30% OFF on First Booking
+        <span>Use Code: FLY30</span>
+      </div>
+
+      <p class="welcome-line">
+        Welcome aboard! Unlock exclusive travel deals and explore the world with comfort and style.
+      </p>
     </div>
 
-    <p class="welcome-line">
-      Welcome aboard! Unlock exclusive travel deals and explore the world with comfort and style.
-    </p>
-  </div>
-
-  <!-- ✅ RIGHT LOGIN CARD -->
-  <div class="card modern-auth-card">
+    <!-- ✅ RIGHT LOGIN CARD -->
+    <div class="card modern-auth-card">
     <h2 class="auth-heading">Sign in</h2>
 
     <form (ngSubmit)="onLogin()">
@@ -63,6 +64,7 @@
 
   <p class="error-msg">{{ message }}</p>
 
-  </div>
+    </div>
 
+  </div>
 </div>

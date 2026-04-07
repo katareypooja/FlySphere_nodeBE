@@ -1,0 +1,266 @@
+<div class="glass-card">
+
+  <div class="flights-header">
+
+    <div class="header-left">
+      <h2>Flight Management</h2>
+      <p class="header-subtitle">
+        Monitor, manage and control all flights
+      </p>
+    </div>
+
+    <div class="header-right">
+      <input
+        type="text"
+        class="search-box"
+        placeholder="Search Flight No..."
+        [(ngModel)]="searchText"
+        (input)="applySearch()"
+      />
+    </div>
+  </div>
+
+  <div class="table-wrapper">
+  <table mat-table [dataSource]="flights" class="flights-table">
+
+  <!-- Flight No -->
+  <ng-container matColumnDef="flightno">
+    <th mat-header-cell *matHeaderCellDef> Flight No </th>
+    <td mat-cell *matCellDef="let element"> {{element.flightno || element.FlightNo}} </td>
+  </ng-container>
+
+  <!-- Airline -->
+  <ng-container matColumnDef="airlinename">
+    <th mat-header-cell *matHeaderCellDef> Airline </th>
+    <td mat-cell *matCellDef="let element"> {{element.airlinename || element.AirlineName}} </td>
+  </ng-container>
+
+  <!-- Combined Departure column: airport + date + time -->
+  <ng-container matColumnDef="departure">
+    <th mat-header-cell *matHeaderCellDef> Departure </th>
+    <td mat-cell *matCellDef="let element">
+      <div class="cell-block">
+        <div class="cell-line strong">
+          {{ element.departureairport || element.DepartureAirport }}
+        </div>
+        <div class="cell-line">
+          {{ formatDate(element.departuredate || element.DepartureDate) }}
+        </div>
+        <div class="cell-line muted">
+          {{ element.departuretime || element.DepartureTime }}
+        </div>
+      </div>
+    </td>
+  </ng-container>
+
+  <!-- Combined Arrival column: airport + date + time -->
+  <ng-container matColumnDef="arrival">
+    <th mat-header-cell *matHeaderCellDef> Arrival </th>
+    <td mat-cell *matCellDef="let element">
+      <div class="cell-block">
+        <div class="cell-line strong">
+          {{ element.arrivalairport || element.ArrivalAirport }}
+        </div>
+        <div class="cell-line">
+          {{ formatDate(element.arrivaldate || element.ArrivalDate) }}
+        </div>
+        <div class="cell-line muted">
+          {{ element.arrivaltime || element.ArrivalTime }}
+        </div>
+      </div>
+    </td>
+  </ng-container>
+
+  <!-- Flight Type -->
+  <ng-container matColumnDef="flighttype">
+    <th mat-header-cell *matHeaderCellDef> Flight Type </th>
+    <td mat-cell *matCellDef="let element"> {{element.flighttype || element.FlightType}} </td>
+  </ng-container>
+
+
+
+
+
+
+
+  <!-- ✅ Economy Combined Column -->
+  <ng-container matColumnDef="economy">
+    <th mat-header-cell *matHeaderCellDef> Economy </th>
+    <td mat-cell *matCellDef="let element">
+      <div class="fare-block compact">
+        <div class="fare-row">A- {{ (element.economyadultfare || element.EconomyAdultFare) | currency:'INR':'symbol':'1.0-0' }}</div>
+        <div class="fare-row">C- {{ (element.economychildfare || element.EconomyChildFare) | currency:'INR':'symbol':'1.0-0' }}</div>
+        <div class="fare-row">
+          <mat-icon class="seat-icon">airline_seat_recline_normal</mat-icon>
+          <span class="seat-count">
+            {{ element.totaleconomyseats || element.TotalEconomySeats }}
+          </span>
+        </div>
+      </div>
+    </td>
+  </ng-container>
+
+  <!-- ✅ Business Combined Column -->
+  <ng-container matColumnDef="business">
+    <th mat-header-cell *matHeaderCellDef> Business </th>
+    <td mat-cell *matCellDef="let element">
+      <div class="fare-block compact">
+        <div class="fare-row">A- {{ (element.businessadultfare || element.BusinessAdultFare) | currency:'INR':'symbol':'1.0-0' }}</div>
+        <div class="fare-row">C- {{ (element.businesschildfare || element.BusinessChildFare) | currency:'INR':'symbol':'1.0-0' }}</div>
+        <div class="fare-row">
+          <mat-icon class="seat-icon">airline_seat_recline_normal</mat-icon>
+          <span class="seat-count">
+            {{ element.totalbusinessseats || element.TotalBusinessSeats }}
+          </span>
+        </div>
+      </div>
+    </td>
+  </ng-container>
+
+  <!-- ✅ First Class Combined Column -->
+  <ng-container matColumnDef="first">
+    <th mat-header-cell *matHeaderCellDef> First Class </th>
+    <td mat-cell *matCellDef="let element">
+      <div class="fare-block compact">
+        <div class="fare-row">A- {{ (element.firstadultfare || element.FirstAdultFare) | currency:'INR':'symbol':'1.0-0' }}</div>
+        <div class="fare-row">C- {{ (element.firstchildfare || element.FirstChildFare) | currency:'INR':'symbol':'1.0-0' }}</div>
+        <div class="fare-row">
+          <mat-icon class="seat-icon">airline_seat_recline_normal</mat-icon>
+          <span class="seat-count">
+            {{ element.totalfirstclassseats || element.TotalFirstClassSeats }}
+          </span>
+        </div>
+      </div>
+    </td>
+  </ng-container>
+
+  <!-- Status -->
+  <ng-container matColumnDef="flightstatus">
+    <th mat-header-cell *matHeaderCellDef> Status </th>
+    <td mat-cell *matCellDef="let element">
+      <span
+        class="status-badge"
+        [ngClass]="{
+              'status-scheduled': (element.flightstatus || element.FlightStatus) === 'Scheduled',
+              'status-departed': (element.flightstatus || element.FlightStatus) === 'Departed',
+              'status-completed': (element.flightstatus || element.FlightStatus) === 'Completed',
+              'status-cancelled': (element.flightstatus || element.FlightStatus) === 'Cancelled'
+        }">
+
+        {{element.flightstatus || element.FlightStatus}}
+      </span>
+    </td>
+  </ng-container>
+
+  <!-- Actions Column -->
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef> Actions </th>
+    <td mat-cell *matCellDef="let element">
+      <div class="action-buttons">
+
+        <button 
+          mat-icon-button 
+          color="primary" 
+          title="Edit"
+          [disabled]="(element.flightstatus || element.FlightStatus) === 'Cancelled' 
+                      || (element.flightstatus || element.FlightStatus) === 'Completed'
+                      || (element.flightstatus || element.FlightStatus) === 'Departed'"
+          (click)="editFlight(element.flightid || element.FlightId)">
+          <mat-icon>edit</mat-icon>
+        </button>
+
+        <button 
+          mat-icon-button 
+          color="warn" 
+          title="Cancel"
+          [disabled]="(element.flightstatus || element.FlightStatus) === 'Cancelled' 
+                      || (element.flightstatus || element.FlightStatus) === 'Completed'
+                      || (element.flightstatus || element.FlightStatus) === 'Departed'"
+          (click)="cancelFlight(element.flightid || element.FlightId)">
+          <mat-icon>cancel</mat-icon>
+        </button>
+
+        <button 
+          mat-icon-button 
+          color="accent" 
+          title="Remove"
+          (click)="removeFlight(element.flightid || element.FlightId)">
+          <mat-icon>delete</mat-icon>
+        </button>
+
+      </div>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+  </table>
+  </div>
+
+  <!-- Mobile card list for small screens -->
+  <div class="mobile-cards">
+    <div class="flight-card" *ngFor="let element of flights">
+      <div class="card-row">
+        <div class="card-left">
+          <div class="card-title">{{element.flightno || element.FlightNo}} — {{element.airlinename || element.AirlineName}}</div>
+          <div class="card-sub strong">{{ element.departureairport || element.DepartureAirport }}</div>
+          <div class="card-sub">{{ formatDate(element.departuredate || element.DepartureDate) }}</div>
+          <div class="card-sub muted">{{ element.departuretime || element.DepartureTime }}</div>
+        </div>
+
+        <div class="card-right">
+          <div class="card-title">{{ element.arrivalairport || element.ArrivalAirport }}</div>
+          <div class="card-sub">{{ formatDate(element.arrivaldate || element.ArrivalDate) }}</div>
+          <div class="card-sub muted">
+            {{ element.arrivaltime || element.ArrivalTime }}
+          </div>
+        </div>
+      </div>
+
+      <div class="card-row fares">
+        <div class="fare-item">Economy: {{ (element.economyfare || element.EconomyFare) | currency:'INR':'symbol':'1.0-0' }} · {{ element.totaleconomyseats || element.TotalEconomySeats }} seats</div>
+        <div class="fare-item">Business: {{ (element.businessfare || element.BusinessFare) | currency:'INR':'symbol':'1.0-0' }} · {{ element.totalbusinessseats || element.TotalBusinessSeats }} seats</div>
+        <div class="fare-item">First: {{ (element.firstclassfare || element.FirstClassFare) | currency:'INR':'symbol':'1.0-0' }} · {{ element.totalfirstclassseats || element.TotalFirstClassSeats }} seats</div>
+      </div>
+
+      <div class="card-row status-row">
+        <div class="status-cell">
+          <span
+            class="status-badge"
+            [ngClass]="{
+              'status-scheduled': (element.flightstatus || element.FlightStatus) === 'Scheduled',
+              'status-departed': (element.flightstatus || element.FlightStatus) === 'Departed',
+              'status-completed': (element.flightstatus || element.FlightStatus) === 'Completed',
+              'status-cancelled': (element.flightstatus || element.FlightStatus) === 'Cancelled'
+            }">
+            {{element.flightstatus || element.FlightStatus}}
+          </span>
+        </div>
+        <div class="actions-cell">
+          <button 
+            mat-icon-button 
+            color="primary" 
+            title="Edit"
+            [disabled]="(element.flightstatus || element.FlightStatus) === 'Cancelled' 
+                        || (element.flightstatus || element.FlightStatus) === 'Completed'
+                        || (element.flightstatus || element.FlightStatus) === 'Departed'"
+            (click)="editFlight(element.flightid || element.FlightId)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button 
+            mat-icon-button 
+            color="warn" 
+            title="Cancel"
+            [disabled]="(element.flightstatus || element.FlightStatus) === 'Cancelled' 
+                        || (element.flightstatus || element.FlightStatus) === 'Completed'
+                        || (element.flightstatus || element.FlightStatus) === 'Departed'"
+            (click)="cancelFlight(element.flightid || element.FlightId)">
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

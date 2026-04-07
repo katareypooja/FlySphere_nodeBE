@@ -1,0 +1,48 @@
+.edit-container {
+  max-width: 900px;
+  margin: 30px auto;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.edit-container h2 {
+  margin-bottom: 20px;
+  color: #1e3a8a;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+label {
+  font-size: 14px;
+  color: #1f2937;   /* darker, stronger contrast */
+  font-weight: 600;
+}
+
+input, select {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+}
+
+.update-btn {
+  margin-top: 25px;
+  padding: 10px 20px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.update-btn:hover {
+  background: #1e40af;
+}

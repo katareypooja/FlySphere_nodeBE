@@ -1,0 +1,66 @@
+<div class="confirmation-wrapper" *ngIf="bookingId">
+
+  <!-- ✅ STEP HEADER -->
+  <div class="step-progress">
+    <div class="step-item completed">
+      <div class="circle">1</div>
+      <span>Booking</span>
+      </div>
+
+      <!-- ✅ Download Ticket Button -->
+      <button class="download-btn"
+              (click)="downloadTicket()">
+        Download Ticket (PDF)
+      </button>
+    <div class="line completed-line"></div>
+    <div class="step-item completed">
+      <div class="circle">2</div>
+      <span>Review</span>
+    </div>
+    <div class="line completed-line"></div>
+    <div class="step-item active">
+      <div class="circle">3</div>
+      <span>Confirmation</span>
+    </div>
+  </div>
+
+  <!-- ✅ SUCCESS ICON -->
+  <div class="success-container">
+    <div class="checkmark-circle">
+      <div class="checkmark"></div>
+    </div>
+    <h2>Booking Confirmed!</h2>
+    <p>Your flight has been successfully booked.</p>
+  </div>
+
+  <!-- ✅ BOOKING ID -->
+  <div class="booking-id-card">
+    <span>Booking ID</span>
+    <h1>{{ bookingId }}</h1>
+  </div>
+
+  <!-- ✅ SUMMARY -->
+  <div class="summary-card">
+    <h3>{{ bookingData?.departCity }} → {{ bookingData?.arriveCity }}</h3>
+    <p>{{ bookingData?.airline }} • {{ bookingData?.fare?.name }}</p>
+
+    <hr>
+
+    <div *ngFor="let p of passengers">
+      {{ p.title }} {{ p.firstName }} {{ p.lastName }} - {{ p.type | titlecase }}
+    </div>
+
+    <hr>
+
+    <div class="total">
+      Total Paid: ₹ {{ totals?.grandTotal | number:'1.0-0' }}
+    </div>
+  </div>
+
+  <!-- ✅ ACTION BUTTONS -->
+  <div class="action-buttons">
+    <button class="print-btn" (click)="printTicket()">Print Ticket</button>
+    <button class="home-btn" (click)="goHome()">Return to Home</button>
+  </div>
+
+</div>

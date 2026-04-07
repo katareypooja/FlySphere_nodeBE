@@ -1,0 +1,197 @@
+/* ============================= */
+/* ✅ UNIFIED CREATE FLIGHT UI  */
+/* ============================= */
+
+:host {
+  display: block;
+  padding: 16px;
+  background: #f5f7fa;
+}
+
+/* ✅ Match Login Page Width */
+.create-flight-form {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* ✅ Make overall layout more compact */
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Section Card (used everywhere) */
+.section-card {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+/* Section Titles */
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.section-icon {
+  font-size: 20px;
+}
+
+/* Standard Grid Layout */
+.form-grid {
+  display: grid;
+  gap: 12px;
+}
+
+/* ✅ Flight Info Row - Force 3 Equal Columns */
+.flight-info-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+/* Two-column layout (Departure / Arrival) */
+.flight-columns {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+/* Pricing Grid */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 200px);
+  gap: 16px;
+  justify-content: center;
+  max-width: 650px;
+  margin: 0 auto;
+}
+
+/* Equal column styling */
+.pricing-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+}
+
+/* Uniform Form Field Width */
+.mat-mdc-form-field {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* ✅ TRUE COMPACT MATERIAL OVERRIDES */
+.mat-mdc-form-field {
+  --mdc-outlined-text-field-container-height: 32px;
+}
+
+/* Reduce internal input padding */
+.mat-mdc-form-field .mdc-text-field {
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+  min-height: 32px !important;
+}
+
+/* Reduce input element height */
+.mat-mdc-form-field .mdc-text-field__input {
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  height: 24px !important;
+  font-size: 13px !important;
+}
+
+/* Reduce label size */
+.mat-mdc-form-field .mdc-floating-label {
+  font-size: 12px !important;
+}
+
+/* Thinner outline */
+.mat-mdc-form-field .mdc-notched-outline__leading,
+.mat-mdc-form-field .mdc-notched-outline__notch,
+.mat-mdc-form-field .mdc-notched-outline__trailing {
+  border-width: 1px !important;
+}
+
+/* ✅ Page Header Styling */
+.page-header {
+  margin-bottom: 18px;
+}
+
+.page-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.page-subtitle {
+  font-size: 13px;
+  color: #666;
+  margin: 0;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+/* Buttons */
+.submit-area {
+  margin-top: 20px;
+}
+
+/* Divider */
+.section-divider {
+  height: 1px;
+  background: #e0e6ed;
+  margin: 24px 0;
+}
+
+/* ✅ Premium Airline Dropdown Styling */
+
+.premium-airline-select {
+  width: 100%;
+}
+
+.airline-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.airline-code {
+  background: linear-gradient(135deg, #1e3a8a, #2563eb);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 12px;
+  min-width: 36px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.airline-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #0f172a;
+}
+
+::ng-deep .mat-mdc-optgroup-label {
+  font-weight: 600;
+  color: #1e3a8a;
+  font-size: 13px;
+}
+
+::ng-deep .mat-mdc-option:hover .airline-code {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+}

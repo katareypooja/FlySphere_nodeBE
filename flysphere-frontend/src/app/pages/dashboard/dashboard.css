@@ -1,0 +1,6 @@
+/* Add subtle spacing below navbar for dashboard only */
+
+:host {
+  display: block;
+  padding-top: 18px; /* small breathing gap under navbar */
+}

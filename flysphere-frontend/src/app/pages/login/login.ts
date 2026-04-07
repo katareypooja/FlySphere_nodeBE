@@ -40,7 +40,12 @@ export class Login {
       next: (res: any) => {
         this.auth.saveToken(res.token);
         this.message = '✅ Login Successful';
-        this.router.navigate(['/dashboard']);
+
+        if (res.role === 'ADMIN') {
+          this.router.navigate(['/admin/dashboard']);
+        } else {
+          this.router.navigate(['/search']);
+        }
       },
       error: (err: any) => {
         this.message = '❌ Login Failed';

@@ -1,0 +1,236 @@
+<!-- ✅ Reusable Booking Navbar -->
+<app-booking-navbar></app-booking-navbar>
+
+<div class="booking-wrapper" *ngIf="bookingData">
+
+  <!-- ✅ Removed duplicate step progress (handled in navbar header) -->
+
+  <div class="booking-layout">
+
+    <!-- ✅ Inline validation only (no stacked error box) -->
+
+    <!-- ================= LEFT: FARE PANEL ================= -->
+    <div class="fare-panel">
+      <div class="fare-card">
+
+        <h3>{{ bookingData?.departCity }} → {{ bookingData?.arriveCity }}</h3>
+        <p class="airline">{{ bookingData?.airline }} • {{ bookingData?.fare?.name }}</p>
+
+        <!-- ✅ Flight Number & Aircraft Type -->
+        <p class="flight-meta">
+          Flight {{ bookingData?.flightNumber }} • 
+          {{ bookingData?.aircraftType }}
+        </p>
+
+        <div class="price-breakdown">
+
+          <div class="row">
+            <span>Adults ({{ adultCount }})</span>
+            <span>₹ {{ bookingData?.fare?.adultFare * adultCount }}</span>
+          </div>
+
+          <div class="row">
+            <span>Children ({{ childCount }})</span>
+            <span>₹ {{ bookingData?.fare?.childFare * childCount }}</span>
+          </div>
+
+          <div class="row">
+            <span>Add-ons</span>
+            <span>₹ {{ addonsTotal }}</span>
+          </div>
+
+          <div class="row">
+            <span>Taxes (12%)</span>
+            <span>₹ {{ taxAmount | number:'1.0-0' }}</span>
+          </div>
+
+          <div class="row">
+            <span>Convenience Fee</span>
+            <span>₹ {{ convenienceFee }}</span>
+          </div>
+
+          <hr>
+
+          <div class="row grand-total">
+            <span>Total Payable</span>
+            <span>₹ {{ grandTotal | number:'1.0-0' }}</span>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= RIGHT: PASSENGERS & ADDONS ================= -->
+    <div class="details-panel" [ngClass]="{'shake': shakeForm}">
+
+      <!-- ✅ Validation Error Banner -->
+      <div *ngIf="validationErrors.length > 0" class="error-banner">
+        <ul>
+          <li *ngFor="let err of validationErrors">
+            {{ err }}
+          </li>
+        </ul>
+      </div>
+
+      <h2>Passengers</h2>
+
+      <div *ngFor="let passenger of passengers; let i = index" class="passenger-card">
+
+        <div class="passenger-header">
+          <h3>
+            Passenger {{ i + 1 }}
+            <span class="badge" [ngClass]="passenger.type">
+              {{ passenger.type | titlecase }} (Age {{ passenger.age }})
+            </span>
+          </h3>
+          <button *ngIf="passengers.length > 1"
+                  class="remove-btn"
+                  (click)="removePassenger(i)">
+            ✕
+          </button>
+        </div>
+
+        <div class="form-grid">
+          <div>
+            <select [(ngModel)]="passenger.title">
+              <option value="">Title</option>
+              <option>Mr</option>
+              <option>Mrs</option>
+              <option>Miss</option>
+            </select>
+            <!-- ✅ Title is optional now -->
+          </div>
+
+          <div>
+            <input type="text"
+                   placeholder="First Name"
+                   [(ngModel)]="passenger.firstName"
+                   [ngClass]="{'invalid-field': isPassengerFieldInvalid(passenger.firstName)}">
+            <div class="field-error"
+                 *ngIf="formSubmitted && !passenger.firstName">
+              First name is required
+            </div>
+          </div>
+
+          <div>
+            <input type="text"
+                   placeholder="Last Name"
+                   [(ngModel)]="passenger.lastName"
+                   [ngClass]="{'invalid-field': isPassengerFieldInvalid(passenger.lastName)}">
+            <div class="field-error"
+                 *ngIf="formSubmitted && !passenger.lastName">
+              Last name is required
+            </div>
+          </div>
+
+          <div>
+            <input type="date"
+                   [(ngModel)]="passenger.dob"
+                   (change)="onDobChange(passenger)"
+                   [ngClass]="{'invalid-field': isDobInvalid(passenger)}">
+            <div class="field-error"
+                 *ngIf="formSubmitted && isDobInvalid(passenger)">
+              Valid date of birth required
+            </div>
+          </div>
+        </div>
+
+        <!-- ✅ ADD-ONS PER PASSENGER -->
+        <div class="addons-section">
+
+          <div class="addons-grid">
+
+            <div class="addon-item">
+              <label>Seat Preference</label>
+              <select [(ngModel)]="passenger.seatPreference">
+                <option value="">No Seat</option>
+                <option value="middle">Middle (+ ₹ 299)</option>
+                <option value="aisle">Aisle (+ ₹ 399)</option>
+                <option value="window">Window (+ ₹ 499)</option>
+              </select>
+            </div>
+
+            <div class="addon-item">
+              <label>Meal Preference</label>
+              <select [(ngModel)]="passenger.mealPreference">
+                <option value="">No Meal</option>
+                <option value="veg">Veg (+ ₹ 199)</option>
+                <option value="jain">Jain (+ ₹ 249)</option>
+                <option value="nonveg">Non‑Veg (+ ₹ 299)</option>
+              </select>
+            </div>
+
+          </div>
+
+          <div class="addon-row">
+            <div class="left">
+              <input type="checkbox" [(ngModel)]="passenger.baggage">
+              <span>Extra Baggage</span>
+            </div>
+            <div class="right">
+              + ₹ {{ baggagePrice }}
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ✅ Add Passenger -->
+      <button class="add-btn"
+              (click)="addPassenger()"
+              [disabled]="passengers.length >= maxPassengers">
+        + Add Passenger
+      </button>
+
+      <!-- ✅ Travel Insurance -->
+      <div class="insurance-section addon-row">
+        <div class="left">
+          <input type="checkbox" [(ngModel)]="travelInsurance">
+          <span>Add Travel Insurance</span>
+        </div>
+        <div class="right">
+          + ₹ {{ insurancePrice }} / passenger
+        </div>
+      </div>
+
+      <!-- ✅ Contact -->
+      <div class="passenger-card">
+        <h3>Contact Information</h3>
+        <div class="form-grid">
+          <div>
+            <input type="email"
+                   placeholder="Email"
+                   [(ngModel)]="contact.email"
+                   [ngClass]="{'invalid-field': isEmailInvalid()}">
+            <div class="field-error"
+                 *ngIf="isEmailInvalid()">
+              Enter a valid email
+            </div>
+          </div>
+
+          <div>
+            <input type="tel"
+                   placeholder="Phone Number"
+                   [(ngModel)]="contact.phone"
+                   [ngClass]="{'invalid-field': isPhoneInvalid()}">
+            <div class="field-error"
+                 *ngIf="isPhoneInvalid()">
+              Enter valid 10-digit phone
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="continue-btn" (click)="confirmBooking()">
+          Proceed →
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

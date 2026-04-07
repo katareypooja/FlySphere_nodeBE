@@ -90,3 +90,123 @@ input {
 .bottom-text {
   margin-top: 10px;
 }
+
+/* ✅ Phone Section Styling */
+
+/* ✅ Realistic Unified Phone Input */
+
+.phone-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+  border: 1px solid #d1d5db;
+  border-radius: 9999px; /* ✅ Same pill shape as other inputs */
+  background: #ffffff;
+  height: 40px;
+  overflow: visible; /* ✅ Allow dropdown to open properly */
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.phone-wrapper:focus-within {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+}
+
+.country-dropdown {
+  position: relative;
+  flex: 0 0 22%;   /* ✅ Slightly reduced width */
+  background: transparent;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 6px;   /* ✅ Reduced inner gap */
+}
+
+.selected-country {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* ✅ Keep arrow inline */
+  gap: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  white-space: nowrap;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 260px;
+  max-height: 220px;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  z-index: 200;
+  padding: 8px;
+  margin-top: 6px;
+
+  /* ✅ Smooth Animation */
+  opacity: 0;
+  transform: translateY(-8px);
+  animation: dropdownFade 0.2s ease forwards;
+}
+
+@keyframes dropdownFade {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.country-search {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+.country-option {
+  padding: 6px 8px;
+  font-size: 13px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.country-option:hover {
+  background: #f3f4f6;
+}
+
+.phone-wrapper input[type="tel"] {
+  flex: 0 0 78%;  /* ✅ Give more space to number */
+  width: 100%;
+  height: 100%;
+  border: none;
+  outline: none;
+  padding: 0 10px;  /* ✅ Reduced padding */
+  font-size: 14px;
+  margin: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  min-width: 0;
+}
+
+/* ✅ Remove Chrome Autofill Blue Background */
+.phone-wrapper input:-webkit-autofill,
+.phone-wrapper input:-webkit-autofill:hover,
+.phone-wrapper input:-webkit-autofill:focus,
+.phone-wrapper input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  box-shadow: 0 0 0 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #000000 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
