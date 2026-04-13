@@ -28,8 +28,7 @@ router.post('/', async (req, res) => {
       BusinessChildFare,
       FirstAdultFare,
       FirstChildFare,
-      FlightStatus,
-      AircraftType
+      FlightStatus
     } = req.body;
 
     // ✅ Use FlightNo received from frontend (random 2 letters + 3 digits)
@@ -43,8 +42,8 @@ router.post('/', async (req, res) => {
        EconomyAdultFare, EconomyChildFare,
        BusinessAdultFare, BusinessChildFare,
        FirstAdultFare, FirstChildFare,
-       FlightStatus, AircraftType)
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)
+       FlightStatus, aircraft_type)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$2)
       RETURNING *`,
       [
         AirlineName,
@@ -65,8 +64,7 @@ router.post('/', async (req, res) => {
         BusinessChildFare,
         FirstAdultFare,
         FirstChildFare,
-        FlightStatus,
-        AircraftType
+        FlightStatus
       ]
     );
 
@@ -224,8 +222,7 @@ router.put('/:id', async (req, res) => {
       BusinessChildFare,
       FirstAdultFare,
       FirstChildFare,
-      FlightStatus,
-      AircraftType
+      FlightStatus
     } = req.body;
 
     const result = await pool.query(
@@ -248,9 +245,8 @@ router.put('/:id', async (req, res) => {
         BusinessChildFare=$16,
         FirstAdultFare=$17,
         FirstChildFare=$18,
-        FlightStatus=$19,
-        AircraftType=$20
-       WHERE FlightId=$21
+        FlightStatus=$19
+       WHERE FlightId=$20
        RETURNING *`,
       [
         AirlineName,
@@ -272,7 +268,6 @@ router.put('/:id', async (req, res) => {
         FirstAdultFare,
         FirstChildFare,
         FlightStatus,
-        AircraftType,
         req.params.id
       ]
     );

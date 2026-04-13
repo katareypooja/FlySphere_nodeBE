@@ -33,6 +33,14 @@ Monitor and manage all flights
         </option>
       </select>
 
+      <!-- ✅ Clear Filters Button -->
+      <button
+        class="clear-btn"
+        *ngIf="selectedAirline || selectedStatus || searchText"
+        (click)="clearFilters()">
+        Clear
+      </button>
+
       <button
         mat-raised-button
         color="primary"
@@ -230,11 +238,31 @@ Monitor and manage all flights
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
 
-  <!-- ✅ Pagination Controls -->
-  <div class="pagination-wrapper">
-    <button mat-button (click)="prevPage()" [disabled]="currentPage === 1">Previous</button>
-    <span>Page {{ currentPage }} of {{ totalPages }}</span>
-    <button mat-button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+  <!-- ✅ Modern Rounded Pagination -->
+  <div class="pagination-wrapper modern">
+    
+    <button 
+      class="page-nav"
+      (click)="prevPage()" 
+      [disabled]="currentPage === 1">
+      «
+    </button>
+
+    <button
+      *ngFor="let page of [].constructor(totalPages); let i = index"
+      class="page-number"
+      [class.active]="currentPage === i + 1"
+      (click)="currentPage = i + 1; updatePagination()">
+      {{ i + 1 }}
+    </button>
+
+    <button 
+      class="page-nav"
+      (click)="nextPage()" 
+      [disabled]="currentPage === totalPages">
+      »
+    </button>
+
   </div>
 
   </div>

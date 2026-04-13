@@ -53,7 +53,7 @@ export class FlightsList implements OnInit, OnDestroy {
 
   // ✅ Pagination
   currentPage: number = 1;
-  pageSize: number = 5;
+  pageSize: number = 10;
 
   // ✅ Search & Filters
   searchText: string = '';
@@ -228,9 +228,13 @@ export class FlightsList implements OnInit, OnDestroy {
 
     if (this.searchText) {
       const term = this.searchText.toLowerCase();
-      filtered = filtered.filter(f =>
-        (f.flightno || f.FlightNo || '').toLowerCase().includes(term)
-      );
+
+      filtered = filtered.filter(f => {
+        const flightNo = (f.flightno || f.FlightNo || '').toLowerCase();
+        const airline = (f.airlinename || f.AirlineName || '').toLowerCase();
+
+        return flightNo.includes(term) || airline.includes(term);
+      });
     }
 
     if (this.selectedAirline) {
@@ -257,6 +261,14 @@ export class FlightsList implements OnInit, OnDestroy {
 
     this.filteredFlights = filtered; // ✅ Do NOT mutate allFlights
     this.updatePagination();
+  }
+
+  // ✅ Clear filters (Airline + Status + Search)
+  clearFilters() {
+    this.selectedAirline = '';
+    this.selectedStatus = '';
+    this.searchText = '';
+    this.applySearch();
   }
 
   sort(column: string) {

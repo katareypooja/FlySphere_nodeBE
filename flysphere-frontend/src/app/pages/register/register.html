@@ -1,188 +1,161 @@
-<div class="auth-layout">
+<div class="auth-wrapper">
+  <div class="auth-layout">
 
-  <!-- ✅ LEFT SIDE (REGISTER BENEFITS) -->
-  <div class="brand-side">
-    <h1 class="brand-title">✈ Join FlySphere</h1>
-    <p class="brand-slogan">Start Your Journey Today</p>
+    <!-- ✅ LEFT SIDE -->
+    <div class="brand-side">
+      <h1 class="brand-title">✈ Join FlySphere</h1>
+      <p class="brand-slogan">Start Your Journey Today</p>
 
-    <div class="promo-banner">
-      🎁 Sign up & Get 20% Welcome Bonus
-      <span>Members Only Offer</span>
+      <div class="promo-banner">
+        🎁 Sign up & Get 20% Welcome Bonus
+        <span>Members Only Offer</span>
+      </div>
+
+      <p class="welcome-line">
+        Create your FlySphere account and unlock:
+      </p>
+
+      <ul class="benefits-list">
+        <li>✅ Exclusive travel deals</li>
+        <li>✅ Early access to discounts</li>
+        <li>✅ Personalized flight offers</li>
+        <li>✅ Faster bookings & secure payments</li>
+      </ul>
     </div>
 
-    <p class="welcome-line">
-      Create your FlySphere account and unlock:
-    </p>
+    <!-- ✅ RIGHT SIDE CARD -->
+    <div class="card modern-auth-card">
+      <h2 class="auth-heading">Create Account</h2>
 
-    <ul class="benefits-list">
-      <li>✅ Exclusive travel deals</li>
-      <li>✅ Early access to discounts</li>
-      <li>✅ Personalized flight offers</li>
-      <li>✅ Faster bookings & secure payments</li>
-    </ul>
-  </div>
+      <form (ngSubmit)="onRegister()">
 
-  <!-- ✅ RIGHT SIDE (REGISTER CARD UPDATED) -->
-  <div class="card modern-auth-card">
-    <h2 class="auth-heading">Create Account</h2>
+        <div class="form-grid">
 
-    <form (ngSubmit)="onRegister()">
+          <div class="form-group">
+            <label class="input-label">First Name*</label>
+            <input type="text" [(ngModel)]="firstName" name="firstName" required />
+          </div>
 
-      <div class="form-grid">
+          <div class="form-group">
+            <label class="input-label">Last Name*</label>
+            <input type="text" [(ngModel)]="lastName" name="lastName" required />
+          </div>
 
-        <!-- ✅ First Line -->
-        <div class="form-group">
-          <label class="input-label">First Name*</label>
-          <input type="text" [(ngModel)]="firstName" name="firstName" required />
-        </div>
+          <div class="form-group">
+            <label class="input-label">User ID*</label>
+            <input type="text" [(ngModel)]="userId" name="userId" required />
+          </div>
 
-        <div class="form-group">
-          <label class="input-label">Last Name*</label>
-          <input type="text" [(ngModel)]="lastName" name="lastName" required />
-        </div>
+          <div class="form-group">
+            <label class="input-label">Phone Number*</label>
 
-        <!-- ✅ Second Line -->
-        <div class="form-group">
-          <label class="input-label">User ID*</label>
-          <input type="text" [(ngModel)]="userId" name="userId" required />
-        </div>
+            <div class="phone-wrapper">
 
-        <div class="form-group">
-          <label class="input-label">Phone Number*</label>
-          
-          <div class="phone-wrapper">
+              <div class="country-dropdown">
 
-            <div class="country-dropdown">
-
-              <div class="selected-country"
-                   (click)="toggleCountryDropdown()">
-                <img *ngIf="selectedCountry"
-                     [src]="selectedCountry.flag"
-                     width="20"
-                     height="14"
-                     style="margin-right:6px; vertical-align:middle;" />
-                {{ countryCode }} ▼
-              </div>
-
-              <div class="dropdown-menu"
-                   *ngIf="showCountryDropdown">
-
-                <input
-                  type="text"
-                  placeholder="Search country..."
-                  [(ngModel)]="countrySearch"
-                  class="country-search"/>
-
-                <div class="country-option"
-                     *ngFor="let country of filteredCountries"
-                     (click)="selectCountry(country)">
-                  <img [src]="country.flag"
+                <div class="selected-country" (click)="toggleCountryDropdown()">
+                  <img *ngIf="selectedCountry"
+                       [src]="selectedCountry.flag"
                        width="20"
                        height="14"
                        style="margin-right:6px; vertical-align:middle;" />
-                  {{ country.name }} ({{ country.code }})
+                  {{ countryCode }} ▼
                 </div>
 
+                <div class="dropdown-menu" *ngIf="showCountryDropdown">
+
+                  <input
+                    type="text"
+                    placeholder="Search country..."
+                    [(ngModel)]="countrySearch"
+                    name="countrySearch"
+                    class="country-search" />
+
+                  <div class="country-option"
+                       *ngFor="let country of filteredCountries"
+                       (click)="selectCountry(country)">
+                    <img [src]="country.flag"
+                         width="20"
+                         height="14"
+                         style="margin-right:6px; vertical-align:middle;" />
+                    {{ country.name }} ({{ country.code }})
+                  </div>
+
+                </div>
               </div>
+
+              <input
+                type="tel"
+                [(ngModel)]="phone"
+                name="phone"
+                required />
             </div>
+          </div>
 
-            <input 
-              type="tel" 
-              [(ngModel)]="phone" 
-              name="phone" 
-              inputmode="numeric"
-              maxlength="12"
-              (input)="onPhoneInput($event)"
-              (keydown)="onPhoneKeyDown($event)"
-              (paste)="onPhonePaste($event)"
-              required />
+        </div>
+
+        <label class="input-label">Email*</label>
+        <input type="email" [(ngModel)]="email" name="email" required />
+
+        <label class="input-label">Password*</label>
+        <input type="password"
+               [(ngModel)]="password"
+               name="password"
+               required />
+
+        <div class="password-checklist" *ngIf="password">
+          <div [ngClass]="hasMinLength ? 'valid' : 'invalid'">
+            {{ hasMinLength ? '✅' : '❌' }} Minimum 8 characters
+          </div>
+          <div [ngClass]="hasLetter ? 'valid' : 'invalid'">
+            {{ hasLetter ? '✅' : '❌' }} At least 1 letter
+          </div>
+          <div [ngClass]="hasNumber ? 'valid' : 'invalid'">
+            {{ hasNumber ? '✅' : '❌' }} At least 1 number
           </div>
         </div>
 
-      </div>
+        <label class="input-label">Confirm Password*</label>
+        <input type="password"
+               [(ngModel)]="confirmPassword"
+               name="confirmPassword"
+               required />
 
-      <label class="input-label">Email*</label>
-      <input type="email" [(ngModel)]="email" name="email" required />
-
-      <label class="input-label">Password*</label>
-      <input
-        type="password"
-        [(ngModel)]="password"
-        name="password"
-        required
-      />
-      <!-- ✅ Live Password Checklist -->
-      <div class="password-checklist" *ngIf="password">
-        <div [ngClass]="hasMinLength ? 'valid' : 'invalid'">
-          {{ hasMinLength ? '✅' : '❌' }} Minimum 8 characters
+        <div class="match-indicator" *ngIf="confirmPassword">
+          <span [ngClass]="{ 'match': passwordsMatch, 'no-match': !passwordsMatch }">
+            {{ passwordsMatch ? 'Passwords match ✅' : 'Passwords do not match ❌' }}
+          </span>
         </div>
-        <div [ngClass]="hasLetter ? 'valid' : 'invalid'">
-          {{ hasLetter ? '✅' : '❌' }} At least 1 letter
+
+        <div class="terms-row">
+          <label class="terms-box">
+            <input type="checkbox"
+                   [(ngModel)]="termsAccepted"
+                   name="termsAccepted"
+                   required />
+            I agree to the
+            <a routerLink="/terms">Terms & Conditions</a>
+            and
+            <a routerLink="/privacy">Privacy Policy</a>
+          </label>
         </div>
-        <div [ngClass]="hasNumber ? 'valid' : 'invalid'">
-          {{ hasNumber ? '✅' : '❌' }} At least 1 number
-        </div>
-      </div>
 
-      <!-- ✅ Strength Bar -->
-      <div class="strength-bar-wrapper" *ngIf="password">
-        <div class="strength-bar">
-          <div
-            class="strength-fill"
-            [ngClass]="{
-              'weak-fill': passwordStrength === 'Weak',
-              'medium-fill': passwordStrength === 'Medium',
-              'strong-fill': passwordStrength === 'Strong'
-            }"
-            [style.width.%]="strengthLevel * 33">
-          </div>
-        </div>
-        <div class="strength-text">
-          {{ passwordStrength }} Password
-        </div>
-      </div>
+        <button type="submit"
+                class="purple-btn"
+                [disabled]="!canRegister">
+          Register
+        </button>
 
-      <label class="input-label">Confirm Password*</label>
-      <input
-        type="password"
-        [(ngModel)]="confirmPassword"
-        name="confirmPassword"
-        required
-      />
-      <div class="match-indicator" *ngIf="confirmPassword">
-        <span [ngClass]="{ 'match': passwordsMatch, 'no-match': !passwordsMatch }">
-          {{ passwordsMatch ? 'Passwords match ✅' : 'Passwords do not match ❌' }}
-        </span>
-      </div>
+      </form>
 
-      <div class="terms-row">
-        <label class="terms-box">
-          <input 
-            type="checkbox" 
-            [(ngModel)]="termsAccepted" 
-            name="termsAccepted" 
-            required />
-          I agree to the <a routerLink="/terms">Terms & Conditions</a> and <a routerLink="/privacy">Privacy Policy</a>
-        </label>
-      </div>
+      <p class="bottom-text">
+        Already have an account?
+        <a routerLink="/login">Login</a>
+      </p>
 
-      <button 
-        type="submit" 
-        class="purple-btn"
-        [disabled]="!canRegister">
-        <span *ngIf="!loading">Register</span>
-        <span *ngIf="loading" class="spinner"></span>
-      </button>
+      <p class="error-msg">{{ message }}</p>
 
-    </form>
-
-    <p class="bottom-text">
-      Already have an account?
-      <a routerLink="/login">Login</a>
-    </p>
-
-    <p class="error-msg">{{ message }}</p>
+    </div>
 
   </div>
-
 </div>

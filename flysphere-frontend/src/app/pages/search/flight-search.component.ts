@@ -296,6 +296,9 @@ export class FlightSearchComponent implements OnInit {
 
     this.http.get<any[]>(departureUrl).subscribe(data => {
 
+      // ✅ Only allow Scheduled flights
+      data = data.filter(f => f.flightstatus === 'Scheduled');
+
       const calculateDuration = (dep: string, arr: string) => {
         const [dh, dm] = dep.split(':').map(Number);
         const [ah, am] = arr.split(':').map(Number);
@@ -356,6 +359,9 @@ export class FlightSearchComponent implements OnInit {
         const returnUrl = `http://localhost:5000/api/flights?from=${toCode}&to=${fromCode}&date=${this.returnDate}`;
 
         this.http.get<any[]>(returnUrl).subscribe(returnData => {
+
+          // ✅ Only allow Scheduled flights for return
+          returnData = returnData.filter(f => f.flightstatus === 'Scheduled');
 
           const calculateDuration = (dep: string, arr: string) => {
             const [dh, dm] = dep.split(':').map(Number);
