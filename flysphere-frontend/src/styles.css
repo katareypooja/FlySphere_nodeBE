@@ -13,15 +13,15 @@ html {
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  background: #f1f5f9; /* ✅ Neutral default background */
-  min-height: 100vh;
-}
-
-/* ✅ Travel Background ONLY for auth pages */
-.auth-wrapper {
   min-height: 100vh;
   background: linear-gradient(rgba(0, 70, 140, 0.6), rgba(0, 70, 140, 0.6)),
               url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e') no-repeat center center/cover;
+  background-attachment: fixed; /* ✅ same full-page travel background everywhere */
+}
+
+/* ✅ Auth wrapper keeps centering only (background now global) */
+.auth-wrapper {
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
