@@ -606,8 +606,18 @@
                  [class.active-fare]="selectedDepartureFare === fare">
 
               <div class="fare-price">
+                <!-- Adult fare (always visible) -->
                 <div class="fare-amount">₹ {{ fare.adultFare | number:'1.0-0' }}</div>
                 <div class="fare-label">per adult</div>
+
+                <!-- Child fare (only when at least one child passenger selected) -->
+                <ng-container *ngIf="children > 0">
+                  <div class="fare-amount child-fare">
+                    ₹ {{ fare.childFare | number:'1.0-0' }}
+                  </div>
+                  <div class="fare-label">per child</div>
+                </ng-container>
+
                 <div class="fare-name">{{ fare.name }}</div>
                 <div class="seat-availability"
                      [ngClass]="{'low-seats': fare.seats <= 6}">
@@ -683,8 +693,18 @@
                  [class.active-fare]="selectedReturnFare === fare">
 
               <div class="fare-price">
+                <!-- Adult fare (always visible) -->
                 <div class="fare-amount">₹ {{ fare.adultFare | number:'1.0-0' }}</div>
                 <div class="fare-label">per adult</div>
+
+                <!-- Child fare (only when at least one child passenger selected) -->
+                <ng-container *ngIf="children > 0">
+                  <div class="fare-amount child-fare">
+                    ₹ {{ fare.childFare | number:'1.0-0' }}
+                  </div>
+                  <div class="fare-label">per child</div>
+                </ng-container>
+
                 <div class="fare-name">{{ fare.name }}</div>
                 <div class="seat-availability"
                      [ngClass]="{'low-seats': fare.seats <= 6}">
@@ -772,8 +792,18 @@
                  [class.active-fare]="selectedFare === fare">
 
               <div class="fare-price">
+                <!-- Adult fare (always visible) -->
                 <div class="fare-amount">₹ {{ fare.adultFare | number:'1.0-0' }}</div>
                 <div class="fare-label">per adult</div>
+
+                <!-- Child fare (only when at least one child passenger selected) -->
+                <ng-container *ngIf="children > 0">
+                  <div class="fare-amount child-fare">
+                    ₹ {{ fare.childFare | number:'1.0-0' }}
+                  </div>
+                  <div class="fare-label">per child</div>
+                </ng-container>
+
                 <div class="fare-name">{{ fare.name }}</div>
                 <div class="seat-availability"
                      [ngClass]="{'low-seats': fare.seats <= 6}">

@@ -8,6 +8,37 @@ function generateBookingId() {
   return 'FS' + Math.floor(100000 + Math.random() * 900000);
 }
 
+async function decrementSeatsForFlight(client, flightId, columnName, seatsToBook) {
+  const res = await client.query(
+    'SELECT * FROM FlightMGTable WHERE FlightId = $1 FOR UPDATE',
+    [flightId]
+  );
+
+  if (res.rows.length === 0) {
+    throw new Error('Flight not found');
+  }
+
+  const row = res.rows[0];
+
+  // pg returns column names in lower-case by default
+  const lowerKey = columnName.toLowerCase();
+  const currentSeats =
+    typeof row[lowerKey] === 'number'
+      ? row[lowerKey]
+      : Number(row[columnName]) || 0;
+
+  if (currentSeats < seatsToBook) {
+    throw new Error('Not enough seats left');
+  }
+
+  const newSeats = currentSeats - seatsToBook;
+
+  await client.query(
+    `UPDATE FlightMGTable SET ${columnName} = $1 WHERE FlightId = $2`,
+    [newSeats, flightId]
+  );
+}
+
 // ✅ Create Booking
 router.post('/', async (req, res) => {
   const {
@@ -16,7 +47,8 @@ router.post('/', async (req, res) => {
     return_flight_id,
     passengers,
     total_amount,
-    trip_type
+    trip_type,
+    cabin_class
   } = req.body;
 
   const client = await pool.connect();
@@ -70,6 +102,35 @@ router.post('/', async (req, res) => {
           p.baggage
         ]
       );
+    }
+
+    /* ======================================
+       2) DECREMENT SEAT COUNTS PER BOOKING
+       ====================================== */
+
+    const seatsToBook = Array.isArray(passengers) ? passengers.length : 0;
+
+    if (seatsToBook > 0) {
+      const CABIN_COLUMN_MAP = {
+        Economy: 'TotalEconomySeats',
+        Business: 'TotalBusinessSeats',
+        First: 'TotalFirstClassSeats'
+      };
+
+      const selectedCabin = cabin_class || 'Economy';
+      const columnName = CABIN_COLUMN_MAP[selectedCabin];
+
+      if (!columnName) {
+        throw new Error(`Unsupported cabin_class: ${selectedCabin}`);
+      }
+
+      if (outbound_flight_id) {
+        await decrementSeatsForFlight(client, outbound_flight_id, columnName, seatsToBook);
+      }
+
+      if (return_flight_id) {
+        await decrementSeatsForFlight(client, return_flight_id, columnName, seatsToBook);
+      }
     }
 
     await client.query('COMMIT');
