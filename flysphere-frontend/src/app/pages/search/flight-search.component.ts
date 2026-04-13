@@ -63,6 +63,13 @@ export class FlightSearchComponent implements OnInit {
   setTripType(type: 'oneway' | 'round') {
     this.tripType = type;
 
+    // ✅ Reset results when switching trip type
+    this.searched = false;
+    this.flights = [];
+    this.returnFlights = [];
+    this.selectedDeparture = null;
+    this.selectedReturn = null;
+
     if (type === 'round') {
       if (!this.returnDate && this.departureDate) {
         const dep = new Date(this.departureDate);
@@ -286,6 +293,12 @@ export class FlightSearchComponent implements OnInit {
   /* ================= SEARCH ================= */
   searchFlights() {
 
+    // ✅ reset message + selection on every search
+    this.errorMessage = '';
+
+    this.selectedDeparture = null;
+    this.selectedReturn = null;
+
     this.isLoading = true;
     this.returnFlights = [];
 
@@ -296,8 +309,10 @@ export class FlightSearchComponent implements OnInit {
 
     this.http.get<any[]>(departureUrl).subscribe(data => {
 
-      // ✅ Only allow Scheduled flights
-      data = data.filter(f => f.flightstatus === 'Scheduled');
+      // ✅ Only allow Scheduled flights (case-insensitive safety)
+      data = data.filter(f => 
+        f.flightstatus && f.flightstatus.toLowerCase() === 'scheduled'
+      );
 
       const calculateDuration = (dep: string, arr: string) => {
         const [dh, dm] = dep.split(':').map(Number);
@@ -360,8 +375,10 @@ export class FlightSearchComponent implements OnInit {
 
         this.http.get<any[]>(returnUrl).subscribe(returnData => {
 
-          // ✅ Only allow Scheduled flights for return
-          returnData = returnData.filter(f => f.flightstatus === 'Scheduled');
+          // ✅ Only allow Scheduled flights for return (case-insensitive safety)
+          returnData = returnData.filter(f => 
+            f.flightstatus && f.flightstatus.toLowerCase() === 'scheduled'
+          );
 
           const calculateDuration = (dep: string, arr: string) => {
             const [dh, dm] = dep.split(':').map(Number);
