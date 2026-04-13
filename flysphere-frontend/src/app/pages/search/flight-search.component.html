@@ -227,11 +227,7 @@
   Currently No flights available.
 </div>
 
-<div
-  *ngIf="tripType === 'round' && searched && !isLoading && ((!flights || flights.length === 0) || (!returnFlights || returnFlights.length === 0))"
-  class="no-flights-message">
-  Currently No flights available.
-</div>
+<!-- ✅ ROUND TRIP EMPTY STATES ARE SHOWN INSIDE EACH COLUMN (see below) -->
 
 <!-- ✅ ONE WAY HEADER (Now Inside Results Section) -->
 <div *ngIf="tripType !== 'round' && flights?.length" class="round-header premium-round-header">
@@ -256,7 +252,7 @@
 
 </div>
 
-<div *ngIf="tripType === 'round'" class="round-header premium-round-header">
+<div *ngIf="tripType === 'round' && flights && flights.length > 0 && returnFlights && returnFlights.length > 0" class="round-header premium-round-header">
   
   <div class="round-header-badge">
     ✈ Round Trip Selection
@@ -287,6 +283,11 @@
         <h3 class="round-title" *ngIf="flights.length">
           {{ flights[0].departCity }} → {{ flights[0].arriveCity }}
         </h3>
+
+        <!-- ✅ Outbound empty message -->
+        <div *ngIf="searched && !isLoading && (!flights || flights.length === 0)" class="no-flights-message">
+          Currently No flights available for departure: {{ fromCityName }} ({{ fromCityCode }}) → {{ toCityName }} ({{ toCityCode }}) on {{ departureDate }}.
+        </div>
 
         <div class="flight-card professional-card fade-in"
              *ngFor="let f of flights"
@@ -353,6 +354,11 @@
         <h3 class="round-title" *ngIf="returnFlights.length">
           {{ returnFlights[0].departCity }} → {{ returnFlights[0].arriveCity }}
         </h3>
+
+        <!-- ✅ Return empty message -->
+        <div *ngIf="searched && !isLoading && (!returnFlights || returnFlights.length === 0)" class="no-flights-message">
+          Currently No flights available for return: {{ toCityName }} ({{ toCityCode }}) → {{ fromCityName }} ({{ fromCityCode }}) on {{ returnDate }}.
+        </div>
 
         <div class="flight-card professional-card fade-in"
              *ngFor="let f of returnFlights"
