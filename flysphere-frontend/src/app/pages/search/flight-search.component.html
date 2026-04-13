@@ -216,9 +216,45 @@
 
     <ng-container *ngIf="!isLoading">
 
-<h2 class="results-title" *ngIf="tripType !== 'round'">
+<h2 class="results-title">
   Available Flights
 </h2>
+
+<!-- ✅ NO FLIGHTS MESSAGE -->
+<div
+  *ngIf="tripType !== 'round' && searched && !isLoading && (!flights || flights.length === 0)"
+  class="no-flights-message">
+  Currently No flights available.
+</div>
+
+<div
+  *ngIf="tripType === 'round' && searched && !isLoading && ((!flights || flights.length === 0) || (!returnFlights || returnFlights.length === 0))"
+  class="no-flights-message">
+  Currently No flights available.
+</div>
+
+<!-- ✅ ONE WAY HEADER (Now Inside Results Section) -->
+<div *ngIf="tripType !== 'round' && flights?.length" class="round-header premium-round-header">
+
+  <div class="round-header-badge">
+    ✈ One Way Selection
+  </div>
+
+  <h2 class="round-main-title">
+    Choose Your Perfect Flight
+  </h2>
+
+  <p class="round-subtitle">
+    Select your preferred departure flight below to continue booking.
+  </p>
+
+  <div class="round-header-divider"></div>
+
+  <h3 class="round-title">
+    {{ flights[0]?.departCity }} → {{ flights[0]?.arriveCity }}
+  </h3>
+
+</div>
 
 <div *ngIf="tripType === 'round'" class="round-header premium-round-header">
   
@@ -413,8 +449,9 @@
       </button>
     </div>
 
-    <!-- ✅ ONE WAY LAYOUT (unchanged) -->
-    <div *ngIf="tripType !== 'round'">
+
+    <!-- ✅ ONE WAY LAYOUT -->
+    <div *ngIf="searched && tripType !== 'round' && flights?.length">
 
       <div class="flight-card professional-card"
            *ngFor="let f of flights; let i = index"
