@@ -1,166 +1,371 @@
-/* ✅ FULL SCREEN WRAPPER */
+/* Wrapper */
 .confirmation-wrapper {
-  min-height: calc(100vh - 70px);
-  background: #f1f5f9;
-  padding: 40px 20px; /* ✅ Add breathing space */
-  display: block; /* ✅ Remove vertical flex centering */
+  background: #f5f7fb;
+  min-height: 100vh;
+  padding: 24px 0 40px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-/* ✅ SINGLE FRAME */
+/* Single frame container */
 .confirmation-frame {
-  width: 100%;
-  max-width: 900px;
-  background: #ffffff;
-  border-radius: 20px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
-  padding: 28px 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 22px;
+  max-width: 960px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(15, 35, 95, 0.12);
+  padding: 24px 28px 20px;
 }
 
-/* ✅ HEADER */
+/* Header */
 .confirmation-header {
   display: flex;
   align-items: center;
-  gap: 18px;
-  border-bottom: 1px solid #e2e8f0;
-  padding-bottom: 18px;
+  gap: 16px;
+  border-bottom: 1px solid #e3e7f0;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
 }
 
 .status-icon {
-  width: 60px;
-  height: 60px;
-  background: #16a34a;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
+  background: #0fb66f;
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
-  color: white;
-  font-weight: bold;
+  font-weight: 700;
+  font-size: 18px;
 }
 
 .header-text h1 {
-  font-size: 22px;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0 0 4px 0;
+  margin: 0 0 2px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #15233a;
 }
 
 .header-text p {
-  font-size: 14px;
-  color: #475569;
   margin: 0;
+  color: #64718a;
+  font-size: 13px;
 }
 
-/* ✅ TOP GRID */
+/* Top summary row */
 .confirmation-top-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 2.2fr 3fr 2fr;
   gap: 16px;
+  margin-bottom: 18px;
 }
 
 .top-card {
-  background: #f8fafc;
-  padding: 16px;
-  border-radius: 14px;
-  border: 1px solid #e2e8f0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #f7f9ff;
 }
 
-.label {
-  font-size: 12px;
-  color: #64748b;
-  margin-bottom: 6px;
+.top-card .label {
+  font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  color: #7a859d;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
 }
 
-.value {
-  font-size: 16px;
+.top-card .value {
+  font-size: 14px;
+  color: #17233e;
   font-weight: 600;
-  color: #0f172a;
 }
 
 .booking-ref {
-  font-size: 18px;
-  letter-spacing: 2px;
-  color: #2563eb;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  letter-spacing: 0.16em;
+}
+
+.route-compact {
+  font-weight: 600;
 }
 
 .total-amount {
-  color: #16a34a;
-  font-size: 18px;
+  font-size: 16px;
+  color: #0f6efb;
 }
 
-/* ✅ DETAILS SECTION */
+/* Details layout */
 .confirmation-details {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 24px;
+}
+
+/* Ticket cards container */
+.flight-tickets {
   display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Ticket card */
+.ticket-card {
+  border-radius: 12px;
+  border: 1px solid #dde3f1;
+  box-shadow: 0 4px 16px rgba(15, 35, 95, 0.08);
+  padding: 16px 18px 14px;
+}
+
+/* Ticket header like “Outbound Tue, 14 Apr 2026” row */
+.ticket-header-row {
+  display: flex;
+  align-items: baseline;
   justify-content: space-between;
-  gap: 30px;
-  border-top: 1px solid #e2e8f0;
-  padding-top: 16px;
-}
-
-.details-section {
-  flex: 1;
-}
-
-.section-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #0f172a;
+  gap: 16px;
   margin-bottom: 8px;
 }
 
-.meta {
-  font-size: 14px;
-  color: #475569;
+.ticket-route {
+  font-weight: 600;
+  font-size: 15px;
+  color: #17233e;
 }
 
-.passenger-row {
-  font-size: 14px;
-  padding: 4px 0;
-  color: #334155;
-}
-
-.passenger-row .type {
-  color: #64748b;
+.ticket-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 12px;
-  margin-left: 4px;
+  color: #7a859d;
 }
 
-/* ✅ ACTION */
+/* right-aligned meta with seat pill */
+.ticket-meta-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #7a859d;
+}
+
+/* Seat type pill: Economy / Business / First */
+.seat-pill {
+  margin-left: 8px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #e8f0ff;
+  color: #0f6efb;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.ticket-dot {
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* Airline row like SpiceJet SG647 */
+.ticket-airline-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.ticket-airline-left {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.airline-name {
+  font-weight: 600;
+  color: #e65100;
+}
+
+.flight-no {
+  font-size: 12px;
+  color: #7a859d;
+}
+
+.ticket-airline-right .fare-class {
+  font-size: 12px;
+  color: #0f6efb;
+}
+
+/* Package / fare details row */
+.ticket-package-row {
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+.ticket-package-row .package-label {
+  color: #7a859d;
+  font-weight: 500;
+  margin-right: 4px;
+}
+
+.ticket-package-row .package-name {
+  color: #0f6efb;
+  font-weight: 500;
+}
+
+/* Central time row with dotted vertical line */
+.ticket-body-row {
+  display: grid;
+  grid-template-columns: 2.1fr 0.6fr 2.1fr;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0 4px;
+}
+
+.time-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.time-main {
+  font-size: 22px;
+  font-weight: 600;
+  color: #17233e;
+}
+
+.city-main {
+  font-size: 13px;
+  color: #17233e;
+}
+
+.airport-sub {
+  font-size: 11px;
+  color: #7a859d;
+}
+
+/* vertical dotted line between origin & destination */
+.timeline-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+/* hide the circular bullets between times */
+.timeline-dot {
+  display: none;
+}
+
+.timeline-line {
+  flex: 1;
+  width: 0;
+  border-left: 1.5px dashed #b6c0d6;
+}
+
+/* Baggage row */
+.ticket-baggage-row {
+  border-top: 1px dashed #e1e5f0;
+  margin-top: 10px;
+  padding-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+}
+
+.baggage-item {
+  font-size: 11px;
+  color: #445169;
+}
+
+.baggage-label {
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+.baggage-value {
+  color: #64718a;
+}
+
+/* Passengers side-card */
+.details-section {
+  border-radius: 12px;
+  border: 1px solid #dde3f1;
+  padding: 14px 16px;
+  align-self: flex-start;
+  max-height: 100%;
+  overflow: auto;
+}
+
+.section-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #17233e;
+}
+
+.passenger-card {
+  border-radius: 8px;
+  background: #f7f9ff;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+}
+
+.flight-field {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+
+.flight-label {
+  color: #7a859d;
+}
+
+.flight-value {
+  font-weight: 500;
+  color: #17233e;
+}
+
+/* Bottom actions */
 .confirmation-action {
   display: flex;
-  justify-content: center;
-  padding-top: 12px;
-  border-top: 1px solid #e2e8f0;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid #e3e7f0;
 }
 
 .download-btn {
-  background: #2563eb;
-  color: white;
   border: none;
-  padding: 10px 24px;
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: 14px;
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-size: 13px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  background: #0f6efb;
+  color: #fff;
+  font-weight: 500;
+  box-shadow: 0 3px 8px rgba(15, 35, 95, 0.35);
 }
 
-.download-btn:hover {
-  background: #1e40af;
+.confirmation-action-right .download-btn {
+  /* Match primary Download button style */
+  background: #0f6efb;
+  color: #fff;
+  box-shadow: 0 3px 8px rgba(15, 35, 95, 0.35);
 }
 
-/* ✅ RESPONSIVE */
-@media (max-width: 768px) {
-  .confirmation-top-grid {
-    grid-template-columns: 1fr;
+/* Responsiveness */
+@media (max-width: 900px) {
+  .confirmation-frame {
+    border-radius: 0;
+    box-shadow: none;
   }
 
   .confirmation-details {
-    flex-direction: column;
+    grid-template-columns: 1fr;
+  }
+
+  .confirmation-top-grid {
+    grid-template-columns: 1fr;
   }
 }

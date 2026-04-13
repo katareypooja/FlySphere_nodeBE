@@ -119,6 +119,42 @@ export class BookingComponent implements OnInit, AfterViewInit {
     return this.passengers.filter(p => p.type === 'child').length;
   }
 
+  /* ================= PASSENGER COMPLETION (BASED ON FIRST SCREEN) ================= */
+
+  get totalFromSearch(): number {
+    const adults = Number(this.bookingData?.adults) || 0;
+    const children = Number(this.bookingData?.children) || 0;
+    return adults + children;
+  }
+
+  get arePassengerDetailsComplete(): boolean {
+    // Number of passenger rows must match number selected on first screen
+    if (this.passengers.length !== this.totalFromSearch) {
+      return false;
+    }
+
+    // Validate passenger fields (aligned with validateBooking)
+    const passengersValid = this.passengers.every(p =>
+      p.firstName &&
+      p.lastName &&
+      p.dob &&
+      p.age &&
+      p.age > 0
+    );
+
+    if (!passengersValid) return false;
+
+    // Validate contact info
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^[0-9]{10}$/;
+
+    const contactValid =
+      !!this.contact.email && emailRegex.test(this.contact.email) &&
+      !!this.contact.phone && phoneRegex.test(this.contact.phone);
+
+    return contactValid;
+  }
+
   /* ================= PRICING ================= */
 
   get baseTotal(): number {
@@ -326,6 +362,14 @@ export class BookingComponent implements OnInit, AfterViewInit {
   }
 
   confirmBooking() {
+
+    // Safety: if passenger details are not entered as per selection, show popup
+    if (this.passengers.length !== this.totalFromSearch) {
+      alert('Please enter passenger details');
+      return;
+    }
+
+    // If other fields (names, DOB, contact etc.) are invalid, use existing validation flow
     if (!this.validateBooking()) {
       return;
     }

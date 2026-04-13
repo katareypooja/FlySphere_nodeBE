@@ -1,75 +1,102 @@
-<!-- ✅ Reuse Premium Booking Navbar -->
 <app-booking-navbar></app-booking-navbar>
 
-<!-- ✅ SINGLE FRAME CONFIRMATION LAYOUT -->
 <div class="confirmation-wrapper" *ngIf="bookingData">
 
-  <div class="confirmation-frame">
+  <div class="confirmation-layout">
 
-    <!-- ✅ HEADER -->
-    <div class="confirmation-header">
-      <div class="status-icon">✓</div>
-      <div class="header-text">
-        <h1>Booking Confirmed</h1>
-        <p>Your journey with FlySphere is successfully secured.</p>
+    <!-- LEFT: CONFIRMATION & FLIGHT SUMMARY -->
+    <div class="summary-panel">
+      <div class="summary-card">
+        <h2>Your Trip is Confirmed!</h2>
+
+        <p class="booking-id">
+          Booking ID:
+          {{ bookingData.booking_id || bookingData.id }}
+        </p>
+
+        <p class="trip-type" *ngIf="tripType">
+          Trip:
+          {{ tripType === 'round' ? 'Round trip' : 'One way' }}
+        </p>
+
+        <!-- Outbound flight -->
+        <div *ngIf="outboundFlight" class="flight-block">
+          <div class="flight-title">✈ Outbound Flight</div>
+          <div class="flight-main">
+            {{ outboundFlight.airline }}
+            ({{ outboundFlight.flightno || outboundFlight.flight_number }})
+          </div>
+          <div class="flight-sub">
+            {{ outboundFlight.origin }} → {{ outboundFlight.destination }}
+          </div>
+          <div class="flight-sub">
+            {{ outboundFlight.departure_time }} - {{ outboundFlight.arrival_time }}
+          </div>
+        </div>
+
+        <!-- Return flight -->
+        <div *ngIf="returnFlight" class="flight-block">
+          <div class="flight-title">✈ Return Flight</div>
+          <div class="flight-main">
+            {{ returnFlight.airline }}
+            ({{ returnFlight.flightno || returnFlight.flight_number }})
+          </div>
+          <div class="flight-sub">
+            {{ returnFlight.origin }} → {{ returnFlight.destination }}
+          </div>
+          <div class="flight-sub">
+            {{ returnFlight.departure_time }} - {{ returnFlight.arrival_time }}
+          </div>
+        </div>
+
+        <!-- Amount -->
+        <div class="price-breakdown">
+          <div class="row grand-total">
+            <span>Amount Paid</span>
+            <span>₹ {{ totals?.grandTotal | number:'1.0-0' }}</span>
+          </div>
+        </div>
+
+        <div class="ticket-actions">
+          <button class="secondary-btn" (click)="printTicket()">Print Ticket</button>
+          <button class="secondary-btn" (click)="downloadTicket()">Download Ticket (PDF)</button>
+        </div>
       </div>
     </div>
 
-    <!-- ✅ SUMMARY ROW -->
-    <div class="confirmation-top-grid">
+    <!-- RIGHT: PASSENGERS SUMMARY -->
+    <div class="details-panel">
+      <h2>Passenger Details</h2>
 
-      <div class="top-card">
-        <div class="label">Booking Reference</div>
-        <div class="value booking-ref">{{ bookingId }}</div>
-      </div>
-
-      <div class="top-card">
-        <div class="label">Route</div>
-        <div class="value route-compact">
-          {{ bookingData?.departureairport }} → {{ bookingData?.arrivalairport }}
+      <div *ngFor="let p of passengers; let i = index" class="passenger-card">
+        <div class="passenger-header">
+          <h3>Passenger {{ i + 1 }}</h3>
+        </div>
+        <div class="passenger-body">
+          <p class="name">
+            {{ p.first_name || p.firstName }}
+            {{ p.last_name || p.lastName }}
+          </p>
+          <p>DOB: {{ p.dob }}</p>
+          <p>Type: {{ (p.type || 'Adult') | titlecase }}</p>
+          <p>
+            Seat:
+            {{ p.seat_preference || p.seatPreference || 'No preference' }}
+          </p>
+          <p>
+            Meal:
+            {{ p.meal_preference || p.mealPreference || 'None' }}
+          </p>
+          <p>
+            Extra baggage:
+            {{ p.baggage ? 'Yes' : 'No' }}
+          </p>
         </div>
       </div>
 
-      <div class="top-card">
-        <div class="label">Total Paid</div>
-        <div class="value total-amount">
-          ₹ {{ totals?.grandTotal | number:'1.0-0' }}
-        </div>
+      <div class="action-row">
+        <button class="primary-btn" (click)="goHome()">Back to Search</button>
       </div>
-
-    </div>
-
-    <!-- ✅ DETAILS -->
-    <div class="confirmation-details">
-
-      <div class="details-section">
-        <div class="section-title">Flight Details</div>
-        <div class="meta">
-          {{ bookingData?.airlinename }} • {{ bookingData?.flighttype }}
-        </div>
-        <div class="meta">
-          {{ bookingData?.departuredate | date:'mediumDate' }}
-          |
-          {{ bookingData?.departuretime }} - {{ bookingData?.arrivaltime }}
-        </div>
-      </div>
-
-      <div class="details-section">
-        <div class="section-title">Passengers</div>
-
-        <div *ngFor="let p of passengers" class="passenger-row">
-          {{ p.title }} {{ p.firstName }} {{ p.lastName }}
-          <span class="type">({{ p.type | titlecase }})</span>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- ✅ ACTION -->
-    <div class="confirmation-action">
-      <button class="download-btn" (click)="downloadTicket()">
-        Download E‑Ticket (PDF)
-      </button>
     </div>
 
   </div>

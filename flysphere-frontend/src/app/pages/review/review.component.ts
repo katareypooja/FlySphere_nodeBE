@@ -35,14 +35,23 @@ export class ReviewComponent implements OnInit {
   }
 
   confirmBooking() {
-    const payload = {
+    const isRound = this.bookingData?.tripType === 'round';
+
+    const outboundFlightId = isRound
+      ? this.bookingData?.departure?.flight?.id
+      : this.bookingData?.flight?.id;
+
+    const payload: any = {
       user_id: 1, // TODO: replace with logged-in user id
-      flight_id: this.bookingData?.tripType === 'round'
-        ? this.bookingData?.departure?.flight?.id
-        : this.bookingData?.flight?.id,
+      outbound_flight_id: outboundFlightId,
       passengers: this.passengers,
-      total_amount: this.totals?.grandTotal
+      total_amount: this.totals?.grandTotal,
+      trip_type: this.bookingData?.tripType || (isRound ? 'round' : 'oneway')
     };
+
+    if (isRound) {
+      payload.return_flight_id = this.bookingData?.return?.flight?.id;
+    }
 
     console.log('🚀 Sending booking payload:', payload);
 

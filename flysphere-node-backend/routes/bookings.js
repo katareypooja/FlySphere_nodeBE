@@ -10,7 +10,14 @@ function generateBookingId() {
 
 // ✅ Create Booking
 router.post('/', async (req, res) => {
-  const { user_id, flight_id, passengers, total_amount } = req.body;
+  const {
+    user_id,
+    outbound_flight_id,
+    return_flight_id,
+    passengers,
+    total_amount,
+    trip_type
+  } = req.body;
 
   const client = await pool.connect();
 
@@ -19,15 +26,31 @@ router.post('/', async (req, res) => {
 
     const bookingId = generateBookingId();
 
-    // Insert into bookings table
+    // Insert into bookings table - keep outbound flight_id for backward compatibility
     const bookingResult = await client.query(
       `INSERT INTO bookings (booking_id, user_id, flight_id, total_amount)
        VALUES ($1, $2, $3, $4)
        RETURNING *`,
-      [bookingId, user_id, flight_id, total_amount]
+      [bookingId, user_id, outbound_flight_id, total_amount]
     );
 
     const booking = bookingResult.rows[0];
+
+    // Insert outbound segment (segment_no = 1)
+    await client.query(
+      `INSERT INTO booking_segments (booking_id, segment_no, flight_id)
+       VALUES ($1, $2, $3)`,
+      [booking.booking_id, 1, outbound_flight_id]
+    );
+
+    // Insert return segment if provided (segment_no = 2)
+    if (return_flight_id) {
+      await client.query(
+        `INSERT INTO booking_segments (booking_id, segment_no, flight_id)
+         VALUES ($1, $2, $3)`,
+        [booking.booking_id, 2, return_flight_id]
+      );
+    }
 
     // Insert passengers
     for (let p of passengers) {
@@ -81,25 +104,17 @@ router.get('/:bookingId', async (req, res) => {
   const bookingId = req.params.bookingId;
 
   try {
-    console.log('✅ USING JOIN QUERY WITH FLIGHTMGTABLE');
-    // ✅ Join bookings + flights
+    // 1) Fetch main booking row
     const bookingResult = await pool.query(
       `SELECT 
         b.id,
         b.booking_id,
+        b.user_id,
         b.total_amount,
+        b.status,
         b.created_at,
-        f.airlinename,
-        f.flighttype,
-        f.departureairport,
-        f.arrivalairport,
-        f.departuredate,
-        f.arrivaldate,
-        f.departuretime,
-        f.arrivaltime
+        b.flight_id
       FROM bookings b
-      LEFT JOIN flightmgtable f 
-        ON b.flight_id = f.flightid
       WHERE b.booking_id = $1`,
       [bookingId]
     );
@@ -108,17 +123,121 @@ router.get('/:bookingId', async (req, res) => {
       return res.status(404).json({ error: 'Booking not found' });
     }
 
-    const booking = bookingResult.rows[0];
+    const bookingRow = bookingResult.rows[0];
 
-    // ✅ Fetch passengers
+    let outboundFlight = null;
+    let returnFlight = null;
+
+    // 2) Try to fetch segments joined to flightmgtable
+    try {
+      const segmentsResult = await pool.query(
+        `SELECT 
+           s.segment_no,
+           f.flightid,
+           f.airlinename,
+           f.flighttype,
+           f.departureairport,
+           f.arrivalairport,
+           f.departuredate,
+           f.arrivaldate,
+           f.departuretime,
+           f.arrivaltime,
+           f.flightno
+         FROM booking_segments s
+         JOIN flightmgtable f
+           ON s.flight_id = f.flightid
+         WHERE s.booking_id = $1
+         ORDER BY s.segment_no ASC`,
+        [bookingRow.booking_id]
+      );
+
+      console.log('✅ Segments for booking', bookingId, segmentsResult.rows);
+
+      for (const row of segmentsResult.rows) {
+        const flightObj = {
+          id: row.flightid,
+          airlinename: row.airlinename,
+          flighttype: row.flighttype,
+          departureairport: row.departureairport,
+          arrivalairport: row.arrivalairport,
+          departuredate: row.departuredate,
+          arrivaldate: row.arrivaldate,
+          departuretime: row.departuretime,
+          arrivaltime: row.arrivaltime,
+          flightnumber: row.flightno
+        };
+
+        if (row.segment_no === 1) {
+          outboundFlight = flightObj;
+        } else if (row.segment_no === 2) {
+          returnFlight = flightObj;
+        }
+      }
+    } catch (segErr) {
+      console.error('⚠️ Error while loading booking segments', segErr);
+      // We will fall back to legacy behavior below
+    }
+
+    // 3) Fallback for legacy/edge cases: if no outboundFlight from segments,
+    //    use the original bookings.flight_id join with flightmgtable
+    if (!outboundFlight && bookingRow.flight_id) {
+      const legacyResult = await pool.query(
+        `SELECT 
+           f.flightid,
+           f.airlinename,
+           f.flighttype,
+           f.departureairport,
+           f.arrivalairport,
+           f.departuredate,
+           f.arrivaldate,
+           f.departuretime,
+           f.arrivaltime,
+           f.flightno
+         FROM bookings b
+         JOIN flightmgtable f
+           ON b.flight_id = f.flightid
+         WHERE b.booking_id = $1`,
+        [bookingId]
+      );
+
+      if (legacyResult.rows.length > 0) {
+        const r = legacyResult.rows[0];
+        outboundFlight = {
+          id: r.flightid,
+          airlinename: r.airlinename,
+          flighttype: r.flighttype,
+          departureairport: r.departureairport,
+          arrivalairport: r.arrivalairport,
+          departuredate: r.departuredate,
+          arrivaldate: r.arrivaldate,
+          departuretime: r.departuretime,
+          arrivaltime: r.arrivaltime,
+          flightnumber: r.flightno
+        };
+      }
+    }
+
+    const tripType = returnFlight ? 'round' : 'oneway';
+
+    // 4) Fetch passengers
     const passengersResult = await pool.query(
       'SELECT * FROM passengers WHERE booking_id = $1',
-      [booking.id]
+      [bookingRow.id]
     );
 
     res.json({
       success: true,
-      booking: booking,
+      booking: {
+        id: bookingRow.id,
+        booking_id: bookingRow.booking_id,
+        user_id: bookingRow.user_id,
+        total_amount: bookingRow.total_amount,
+        status: bookingRow.status,
+        created_at: bookingRow.created_at,
+        trip_type: tripType,
+        outbound_flight: outboundFlight,
+        return_flight: returnFlight
+      },
       passengers: passengersResult.rows
     });
 
