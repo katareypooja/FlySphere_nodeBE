@@ -5,7 +5,7 @@
 :host {
   display: block;
   padding: 16px;
-  background: #f5f7fa;
+  background: transparent; /* ✅ removed outer transparent layer */
 }
 
 /* ✅ Match Login Page Width */
@@ -23,11 +23,12 @@
 
 /* Section Card (used everywhere) */
 .section-card {
-  background: #ffffff;
-  border-radius: 8px;
-  padding: 10px 12px;
-  margin-bottom: 10px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  background: #ffffff; /* ✅ solid white card */
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
 }
 
 /* Section Titles */
@@ -130,11 +131,12 @@
   font-size: 20px;
   font-weight: 700;
   margin-bottom: 4px;
+  color: #ffffff; /* ✅ changed to white */
 }
 
 .page-subtitle {
   font-size: 13px;
-  color: #666;
+  color: #ffffff; /* ✅ changed to white */
   margin: 0;
 }
 

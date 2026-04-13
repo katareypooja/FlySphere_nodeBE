@@ -37,8 +37,9 @@ import { RouterModule } from '@angular/router';
         <div class="fleet-modern airbus-modern">
           <div>
             <div class="fleet-title">Airbus A320</div>
-            <div class="fleet-price">₹{{ airbusFare }}</div>
-            <div class="fleet-label">{{ airbusCount }} Flights</div>
+            <div class="fleet-label">Economy: {{ airbusSeats.economy }}</div>
+            <div class="fleet-label">Business: {{ airbusSeats.business }}</div>
+            <div class="fleet-label">First: {{ airbusSeats.first }}</div>
           </div>
           <img class="fleet-plane"
                src="https://freepngimg.com/download/airplane/125940-flying-airplane-vector-hd-image-free.png"
@@ -49,8 +50,9 @@ import { RouterModule } from '@angular/router';
         <div class="fleet-modern boeing-modern">
           <div>
             <div class="fleet-title">Boeing 737</div>
-            <div class="fleet-price">₹{{ boeingFare }}</div>
-            <div class="fleet-label">{{ boeingCount }} Flights</div>
+            <div class="fleet-label">Economy: {{ boeingSeats.economy }}</div>
+            <div class="fleet-label">Business: {{ boeingSeats.business }}</div>
+            <div class="fleet-label">First: {{ boeingSeats.first }}</div>
           </div>
           <img class="fleet-plane"
                src="https://freepngimg.com/download/airplane/125940-flying-airplane-vector-hd-image-free.png"
@@ -98,7 +100,7 @@ import { RouterModule } from '@angular/router';
         <div *ngIf="upcomingFlights.length > 0" class="upcoming-wrapper side-upcoming">
           <div class="upcoming-header">
             <h3>Upcoming Flights</h3>
-            <a class="see-all" routerLink="/flights">See All</a>
+            <a class="see-all" routerLink="/admin/flights">See All</a>
           </div>
 
           <div class="upcoming-list">
@@ -213,8 +215,9 @@ import { RouterModule } from '@angular/router';
     }
 
     .total-title {
-      font-size: 14px;
-      opacity: 0.9;
+      font-size: 16px;
+      font-weight: 700;
+      opacity: 1;
     }
 
     .total-value {
@@ -295,8 +298,9 @@ import { RouterModule } from '@angular/router';
     }
 
     .fleet-title {
-      font-size: 14px;
-      opacity: 0.9;
+      font-size: 16px;
+      font-weight: 700;
+      opacity: 1;
     }
 
     .fleet-price {
@@ -485,15 +489,12 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   // ✅ Placeholder for future booking integration
   bookingCount = 0;
 
-  // ✅ Seat Counts (Will reduce automatically after booking integration)
-  economySeats = 50;
-  businessSeats = 25;
-  firstClassSeats = 10;
-
   airbusCount = 0;
   boeingCount = 0;
-  airbusFare: string = '0';
-  boeingFare: string = '0';
+
+  // ✅ Dynamic Seat Availability Per Aircraft Type
+  airbusSeats = { economy: 0, business: 0, first: 0 };
+  boeingSeats = { economy: 0, business: 0, first: 0 };
 
   // ✅ Monthly data (separate for Airbus & Boeing)
   monthlyDataAirbus: number[] = new Array(12).fill(0);
@@ -657,6 +658,20 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.airbusCount = airbus.length;
         this.boeingCount = boeing.length;
 
+        // ✅ Get seat availability dynamically (from first matching flight)
+        // ✅ Fixed Seat Configuration (Independent of flights data)
+        this.airbusSeats = {
+          economy: 60,
+          business: 30,
+          first: 10
+        };
+
+        this.boeingSeats = {
+          economy: 50,
+          business: 25,
+          first: 10
+        };
+
         // ✅ Calculate average fare across ALL adult & child fares (Economy + Business + First)
 
         const calculateAverageFare = (flights: any[]) => {
@@ -678,8 +693,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           return divisor ? (total / divisor).toFixed(0) : '0';
         };
 
-        this.airbusFare = calculateAverageFare(airbus);
-        this.boeingFare = calculateAverageFare(boeing);
 
         // ✅ Stabilize Angular change detection for dashboard
         this.cdr.detectChanges();

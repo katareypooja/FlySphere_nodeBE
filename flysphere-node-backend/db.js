@@ -2,11 +2,11 @@ const { Pool } = require('pg');
 require('dotenv').config({ path: __dirname + '/.env' });
 
 const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'FlySphere',
-  password: 'Nttdata@123',
-  port: '5432',
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD ? String(process.env.DB_PASSWORD) : '',
+  port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 5432,
 });
 
 pool.on('connect', () => {

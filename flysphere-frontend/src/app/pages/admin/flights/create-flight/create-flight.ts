@@ -66,7 +66,7 @@ export class CreateFlight {
 
       this.flightForm = this.fb.group({
         AirlineName: ['', Validators.required],
-        FlightType: ['', Validators.required],
+        FlightType: [''],
         // ✅ FlightNo auto-generated (do not block form submission)
         FlightNo: [''],
         // ✅ Flight status (required for edit/cancel flow stability)
@@ -85,9 +85,15 @@ export class CreateFlight {
 
         ArrivalTime: [{ value: '', disabled: true }, Validators.required],
         DurationMinutes: [null, [Validators.required, Validators.min(1)]],
-        TotalEconomySeats: [50, Validators.required],
-        TotalBusinessSeats: [25, Validators.required],
-        TotalFirstClassSeats: [10, Validators.required],
+        // ✅ Boeing Seat Availability
+        TotalEconomySeats: [50],
+        TotalBusinessSeats: [25],
+        TotalFirstClassSeats: [10],
+
+        // ✅ Airbus Seat Availability
+        AirbusTotalEconomySeats: [60],
+        AirbusTotalBusinessSeats: [30],
+        AirbusTotalFirstClassSeats: [10],
 
         // Economy fares
         EconomyAdultFare: [null, [Validators.required, Validators.min(0)]],
@@ -113,6 +119,25 @@ export class CreateFlight {
       // ✅ Auto-calculate pricing based on Economy Adult Fare
       this.flightForm.get('EconomyAdultFare')?.valueChanges.subscribe((value) => {
         this.autoCalculatePricing(value);
+      });
+
+      // ✅ Auto-update seat availability when Flight Type changes
+      this.flightForm.get('FlightType')?.valueChanges.subscribe((type) => {
+        if (type === 'Airbus A320') {
+          this.flightForm.patchValue({
+            TotalEconomySeats: 60,
+            TotalBusinessSeats: 30,
+            TotalFirstClassSeats: 10
+          }, { emitEvent: false });
+        }
+
+        if (type === 'Boeing 737') {
+          this.flightForm.patchValue({
+            TotalEconomySeats: 50,
+            TotalBusinessSeats: 25,
+            TotalFirstClassSeats: 10
+          }, { emitEvent: false });
+        }
       });
   }
 
@@ -264,11 +289,7 @@ export class CreateFlight {
 
   onSubmit() {
 
-    console.log('Submit clicked');
-    console.log('Form valid:', this.flightForm.valid);
-
     if (!this.flightForm.valid) {
-      console.log('Form invalid — marking all as touched');
       this.flightForm.markAllAsTouched();
       return;
     }
@@ -288,6 +309,9 @@ export class CreateFlight {
       TotalEconomySeats,
       TotalBusinessSeats,
       TotalFirstClassSeats,
+      AirbusTotalEconomySeats,
+      AirbusTotalBusinessSeats,
+      AirbusTotalFirstClassSeats,
       EconomyAdultFare,
       EconomyChildFare,
       BusinessAdultFare,
@@ -296,29 +320,39 @@ export class CreateFlight {
       FirstChildFare
     } = formData;
 
-      const payload = {
-        AirlineName,
-        FlightType,
-        FlightNo,
-        DepartureAirport,
-        ArrivalAirport,
-        DepartureDate: `${DepartureDate.getFullYear()}-${(DepartureDate.getMonth()+1).toString().padStart(2,'0')}-${DepartureDate.getDate().toString().padStart(2,'0')}`,
-        ArrivalDate: `${ArrivalDate.getFullYear()}-${(ArrivalDate.getMonth()+1).toString().padStart(2,'0')}-${ArrivalDate.getDate().toString().padStart(2,'0')}`,
-        DepartureTime: DepartureTime + ':00',
-        ArrivalTime: ArrivalTime + ':00',
-        TotalEconomySeats,
-        TotalBusinessSeats,
-        TotalFirstClassSeats,
-        EconomyAdultFare,
-        EconomyChildFare,
-        BusinessAdultFare,
-        BusinessChildFare,
-        FirstAdultFare,
-        FirstChildFare,
-        FlightStatus: 'Scheduled'
-      };
+    // ✅ Pick correct seat fields based on Flight Type
+    const seatPayload =
+      FlightType.includes('Airbus')
+        ? {
+            TotalEconomySeats: AirbusTotalEconomySeats,
+            TotalBusinessSeats: AirbusTotalBusinessSeats,
+            TotalFirstClassSeats: AirbusTotalFirstClassSeats
+          }
+        : {
+            TotalEconomySeats,
+            TotalBusinessSeats,
+            TotalFirstClassSeats
+          };
 
-      console.log('Submitting payload:', payload);
+    const payload = {
+      AirlineName,
+      FlightType,
+      FlightNo,
+      DepartureAirport,
+      ArrivalAirport,
+      DepartureDate: `${DepartureDate.getFullYear()}-${(DepartureDate.getMonth()+1).toString().padStart(2,'0')}-${DepartureDate.getDate().toString().padStart(2,'0')}`,
+      ArrivalDate: `${ArrivalDate.getFullYear()}-${(ArrivalDate.getMonth()+1).toString().padStart(2,'0')}-${ArrivalDate.getDate().toString().padStart(2,'0')}`,
+      DepartureTime: DepartureTime + ':00',
+      ArrivalTime: ArrivalTime + ':00',
+      ...seatPayload,
+      EconomyAdultFare,
+      EconomyChildFare,
+      BusinessAdultFare,
+      BusinessChildFare,
+      FirstAdultFare,
+      FirstChildFare,
+      FlightStatus: 'Scheduled'
+    };
 
     this.http.post('http://localhost:5000/api/flights', payload)
       .subscribe({
