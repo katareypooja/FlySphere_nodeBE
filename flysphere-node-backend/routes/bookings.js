@@ -149,6 +149,20 @@ router.post('/', async (req, res) => {
   }
 });
 
+/* ✅ Get All Bookings (Admin Dashboard) */
+router.get('/', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT * FROM bookings ORDER BY created_at DESC`
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Fetch All Bookings Error:', error);
+    res.status(500).json({ error: 'Failed to fetch bookings' });
+  }
+});
+
 /* ✅ Get Full Booking Details (Production Safe) */
 router.get('/:bookingId', async (req, res) => {
   const bookingId = req.params.bookingId;

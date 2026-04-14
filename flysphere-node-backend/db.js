@@ -4,7 +4,7 @@ require('dotenv').config({ path: __dirname + '/.env' });
 const pool = new Pool({
   user: 'postgres',
   host: 'localhost',
-  database: 'FlySphere',
+  database: 'flysphere_db',
   password: 'Nttdata@123',
   port: '5432',
 });
