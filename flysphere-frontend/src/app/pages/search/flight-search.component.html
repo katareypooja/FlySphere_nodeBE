@@ -108,7 +108,8 @@
           #departureInput
           type="date" 
           [(ngModel)]="departureDate"
-          class="real-date-input">
+          [min]="today"
+          class="real-date-input" />
       </div>
 
       <!-- RETURN (ALWAYS VISIBLE) -->
@@ -132,7 +133,8 @@
             #returnInput
             type="date"
             [(ngModel)]="returnDate"
-            class="real-date-input">
+            [min]="departureDate || today"
+            class="real-date-input" />
         </ng-container>
 
         <!-- ✅ One Way Mode -->

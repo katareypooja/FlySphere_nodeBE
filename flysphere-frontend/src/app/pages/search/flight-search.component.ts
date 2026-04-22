@@ -82,6 +82,8 @@ export class FlightSearchComponent implements OnInit {
   airports: string[] = [];
   from = 'Delhi (DEL)';
   to = 'Bengaluru (BLR)';
+  today: string = new Date().toISOString().split('T')[0];
+
   private _departureDate = '';
   returnDate = '';
 
@@ -293,6 +295,14 @@ export class FlightSearchComponent implements OnInit {
   /* ================= SEARCH ================= */
   searchFlights() {
 
+    // ✅ Extra safety validation for round trip
+    if (this.tripType === 'round' && this.returnDate && this.departureDate) {
+      if (this.returnDate <= this.departureDate) {
+        alert('Return date cannot be before departure date');
+        return;
+      }
+    }
+
     // ✅ reset message + selection on every search
     this.errorMessage = '';
 
@@ -322,9 +332,35 @@ export class FlightSearchComponent implements OnInit {
         return `${Math.floor(diff / 60)}h ${diff % 60}m`;
       };
 
-      this.flights = data.map(f => ({
-        id: f.flightid,
-        airline: f.airlinename,
+      this.flights = data.map(f => {
+
+        // ✅ Dynamic pricing based on selected class & passenger count
+        let adultFare = 0;
+        let childFare = 0;
+        let availableSeats = 0;
+
+        if (this.travelClass === 'Business') {
+          adultFare = f.businessadultfare;
+          childFare = f.businesschildfare;
+          availableSeats = f.totalbusinessseats;
+        } else if (this.travelClass === 'First Class') {
+          adultFare = f.firstadultfare;
+          childFare = f.firstchildfare;
+          availableSeats = f.totalfirstclassseats;
+        } else {
+          // Default Economy
+          adultFare = f.economyadultfare;
+          childFare = f.economychildfare;
+          availableSeats = f.totaleconomyseats;
+        }
+
+        const totalPrice =
+          (adultFare * this.adults) +
+          (childFare * this.children);
+
+        return {
+          id: f.flightid,
+          airline: f.airlinename,
 
         // ✅ Added for display
         flightno: f.flightno,
@@ -349,10 +385,11 @@ export class FlightSearchComponent implements OnInit {
         totalBusinessSeats: f.totalbusinessseats,
         totalFirstSeats: f.totalfirstclassseats,
 
-        // ✅ Default display price (Economy adult)
-        price: f.economyadultfare,
-        seats: f.totaleconomyseats
-      }));
+        // ✅ Dynamic calculated price
+        price: totalPrice,
+        seats: availableSeats
+        };
+      });
 
       if (this.flights.length > 0) {
         this.lowestFare = Math.min(...this.flights.map(f => f.price));
@@ -388,9 +425,33 @@ export class FlightSearchComponent implements OnInit {
             return `${Math.floor(diff / 60)}h ${diff % 60}m`;
           };
 
-          this.returnFlights = returnData.map(f => ({
-            id: f.flightid,
-            airline: f.airlinename,
+          this.returnFlights = returnData.map(f => {
+
+            let adultFare = 0;
+            let childFare = 0;
+            let availableSeats = 0;
+
+            if (this.travelClass === 'Business') {
+              adultFare = f.businessadultfare;
+              childFare = f.businesschildfare;
+              availableSeats = f.totalbusinessseats;
+            } else if (this.travelClass === 'First Class') {
+              adultFare = f.firstadultfare;
+              childFare = f.firstchildfare;
+              availableSeats = f.totalfirstclassseats;
+            } else {
+              adultFare = f.economyadultfare;
+              childFare = f.economychildfare;
+              availableSeats = f.totaleconomyseats;
+            }
+
+            const totalPrice =
+              (adultFare * this.adults) +
+              (childFare * this.children);
+
+            return {
+              id: f.flightid,
+              airline: f.airlinename,
 
             // ✅ Added for display
             flightno: f.flightno,
@@ -415,9 +476,10 @@ export class FlightSearchComponent implements OnInit {
             totalBusinessSeats: f.totalbusinessseats,
             totalFirstSeats: f.totalfirstclassseats,
 
-            price: f.economyadultfare,
-            seats: f.totaleconomyseats
-          }));
+            price: totalPrice,
+            seats: availableSeats
+            };
+          });
 
           if (this.returnFlights.length > 0) {
             this.lowestFareReturn = Math.min(...this.returnFlights.map(f => f.price));
@@ -620,6 +682,7 @@ export class FlightSearchComponent implements OnInit {
           flight: this.selectedReturn,
           fare: this.selectedReturnFare
         },
+        cabinClass: this.selectedDepartureFare?.name || 'Economy',
         adults: this.adults,
         children: this.children
       };
@@ -641,6 +704,7 @@ export class FlightSearchComponent implements OnInit {
       tripType: 'oneway',
       flight: this.selectedFlight,   // ✅ wrapped inside flight (consistent with round-trip)
       fare: fareToBook,
+      cabinClass: fareToBook?.name || 'Economy',
       adults: this.adults,
       children: this.children
     };

@@ -1051,13 +1051,13 @@
 
 .selected-badge {
   position: absolute;
-  top: -14px;              /* ✅ Move above card */
-  left: 24px;              /* ✅ Move away from price */
+  top: -12px;              /* ✅ align with lowest fare */
+  right: 24px;             /* ✅ move above price section */
   background: #2563eb;
   color: #ffffff;
   font-size: 11px;
   font-weight: 700;
-  padding: 5px 14px;
+  padding: 6px 16px;
   border-radius: 999px;
   letter-spacing: 0.4px;
   box-shadow: 0 8px 18px rgba(37,99,235,0.35);
@@ -1224,16 +1224,17 @@
 /* ✅ Lowest Fare Ribbon */
 .lowest-ribbon {
   position: absolute;
-  top: 14px;
-  left: -10px;
+  top: -12px;              /* ✅ lift above card */
+  left: 20px;              /* ✅ align properly inside */
   background: linear-gradient(90deg, #16a34a, #22c55e);
   color: #ffffff;
   font-size: 11px;
   font-weight: 700;
-  padding: 6px 14px;
-  border-radius: 0 20px 20px 0;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  padding: 6px 16px;
+  border-radius: 999px;    /* ✅ pill style */
+  box-shadow: 0 6px 14px rgba(0,0,0,0.18);
   letter-spacing: 0.5px;
+  z-index: 3;
 }
 
 /* ✅ Animated Seat Indicator */

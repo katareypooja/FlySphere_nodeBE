@@ -48,7 +48,9 @@ router.post('/', async (req, res) => {
     passengers,
     total_amount,
     trip_type,
-    cabin_class
+    cabin_class, // legacy support
+    outbound_cabin_class,
+    return_cabin_class
   } = req.body;
 
   const client = await pool.connect();
@@ -111,25 +113,61 @@ router.post('/', async (req, res) => {
     const seatsToBook = Array.isArray(passengers) ? passengers.length : 0;
 
     if (seatsToBook > 0) {
-      const CABIN_COLUMN_MAP = {
-        Economy: 'TotalEconomySeats',
-        Business: 'TotalBusinessSeats',
-        First: 'TotalFirstClassSeats'
+
+      const getColumnFromCabin = (cabin) => {
+        const normalized = (cabin || 'Economy').toLowerCase().trim();
+
+        if (normalized.includes('economy')) return 'TotalEconomySeats';
+        if (normalized.includes('business')) return 'TotalBusinessSeats';
+        if (normalized.includes('first')) return 'TotalFirstClassSeats';
+
+        throw new Error(`Unsupported cabin_class: ${cabin}`);
       };
 
-      const selectedCabin = cabin_class || 'Economy';
-      const columnName = CABIN_COLUMN_MAP[selectedCabin];
+      // ✅ One-way support (backward compatible)
+      if (!return_flight_id) {
+        const columnName = getColumnFromCabin(
+          outbound_cabin_class || cabin_class
+        );
 
-      if (!columnName) {
-        throw new Error(`Unsupported cabin_class: ${selectedCabin}`);
+        if (outbound_flight_id) {
+          await decrementSeatsForFlight(
+            client,
+            outbound_flight_id,
+            columnName,
+            seatsToBook
+          );
+        }
       }
 
-      if (outbound_flight_id) {
-        await decrementSeatsForFlight(client, outbound_flight_id, columnName, seatsToBook);
-      }
-
+      // ✅ Round-trip support (separate cabin classes)
       if (return_flight_id) {
-        await decrementSeatsForFlight(client, return_flight_id, columnName, seatsToBook);
+
+        // Outbound segment
+        if (outbound_flight_id) {
+          const outboundColumn = getColumnFromCabin(
+            outbound_cabin_class || cabin_class
+          );
+
+          await decrementSeatsForFlight(
+            client,
+            outbound_flight_id,
+            outboundColumn,
+            seatsToBook
+          );
+        }
+
+        // Return segment
+        const returnColumn = getColumnFromCabin(
+          return_cabin_class || outbound_cabin_class || cabin_class
+        );
+
+        await decrementSeatsForFlight(
+          client,
+          return_flight_id,
+          returnColumn,
+          seatsToBook
+        );
       }
     }
 
@@ -321,7 +359,7 @@ router.get('/:id/ticket', async (req, res) => {
 
     const passengers = passengersResult.rows;
 
-    const doc = new PDFDocument({ margin: 40 });
+    const doc = new PDFDocument({ margin: 0 });
 
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader(
@@ -331,37 +369,200 @@ router.get('/:id/ticket', async (req, res) => {
 
     doc.pipe(res);
 
-    doc.fontSize(22).text('FlySphere E-Ticket', { align: 'center' });
-    doc.moveDown();
+    /* ================= HEADER BAR ================= */
+    doc.rect(0, 0, doc.page.width, 100).fill('#1f3b64');
 
-    doc.fontSize(14).text(`Booking ID: ${booking.booking_id}`);
-    doc.text(`Total Amount: ₹ ${booking.total_amount}`);
-    doc.text(`Date: ${new Date(booking.created_at).toLocaleString()}`);
-    doc.moveDown();
+    doc
+      .fillColor('#ffffff')
+      .fontSize(28)
+      .text('FlySphere E‑Ticket', 40, 35);
 
-    doc.fontSize(16).text('Passengers:', { underline: true });
-    doc.moveDown(0.5);
+
+    doc
+      .fontSize(12)
+      .text(`Booking ID: ${booking.booking_id}`, 40, 65);
+
+    doc
+      .text(
+        `Issued On: ${new Date(booking.created_at).toLocaleString()}`,
+        350,
+        65
+      );
+
+    doc.fillColor('#000000');
+
+    let y = 120;
+
+    /* ================= FLIGHT DETAILS ================= */
+    const segments = await pool.query(
+      `SELECT 
+         s.segment_no,
+         f.airlinename,
+         f.flightno,
+         f.departureairport,
+         f.arrivalairport,
+         f.departuretime,
+         f.arrivaltime
+       FROM booking_segments s
+       JOIN flightmgtable f
+         ON s.flight_id = f.flightid
+       WHERE s.booking_id = $1
+       ORDER BY s.segment_no ASC`,
+      [booking.booking_id]
+    );
+
+    doc
+      .fontSize(16)
+      .fillColor('#1f3b64')
+      .text('FLIGHT DETAILS', 40, y);
+
+    y += 20;
+    doc.moveTo(40, y).lineTo(550, y).stroke('#e2e8f0');
+    y += 15;
+
+    segments.rows.forEach((seg) => {
+      const fromMatch = (seg.departureairport || '').match(/\((.*?)\)/);
+      const toMatch = (seg.arrivalairport || '').match(/\((.*?)\)/);
+
+      const fromCode = fromMatch
+        ? fromMatch[1].toUpperCase()
+        : (seg.departureairport || '').substring(0, 3).toUpperCase();
+
+      const toCode = toMatch
+        ? toMatch[1].toUpperCase()
+        : (seg.arrivalairport || '').substring(0, 3).toUpperCase();
+
+      doc.fontSize(18).fillColor('#1f3b64');
+      doc.text(`${fromCode}  -  ${toCode}`, 50, y);
+
+      y += 22;
+
+      const depTime = String(seg.departuretime).substring(0,5);
+      const arrTime = String(seg.arrivaltime).substring(0,5);
+
+      doc.fontSize(12).fillColor('#000000');
+      doc.text(
+        `${seg.airlinename} (${seg.flightno})`,
+        60,
+        y
+      );
+
+      y += 15;
+
+      doc.fontSize(12).fillColor('#475569');
+      doc.text(`Departure: ${depTime}    Arrival: ${arrTime}`, 60, y);
+
+      y += 30;
+    });
+
+    /* ================= PASSENGERS ================= */
+    doc
+      .fontSize(16)
+      .fillColor('#1f3b64')
+      .text('PASSENGERS', 40, y);
+
+    y += 20;
+    doc.moveTo(40, y).lineTo(550, y).stroke('#e2e8f0');
+    y += 15;
 
     passengers.forEach((p, index) => {
-      doc.fontSize(12).text(
-        `${index + 1}. ${p.title} ${p.first_name} ${p.last_name} | Age: ${p.age} | Type: ${p.type}`
-      );
-      doc.text(
-        `Seat: ${p.seat_preference || 'N/A'} | Meal: ${p.meal_preference || 'N/A'} | Baggage: ${p.baggage ? 'Yes' : 'No'}`
-      );
-      doc.moveDown();
+      doc
+        .fontSize(12)
+        .fillColor('#000000')
+        .text(
+          `${index + 1}. ${p.title || ''} ${p.first_name} ${p.last_name} (${p.type})`,
+          50,
+          y
+        );
+
+      y += 15;
+
+      doc
+        .fontSize(10)
+        .fillColor('#475569')
+        .text(
+          `Age: ${p.age}  |  Seat: ${p.seat_preference || 'N/A'}  |  Meal: ${p.meal_preference || 'N/A'}  |  Baggage: ${
+            p.baggage ? 'Yes' : 'No'
+          }`,
+          60,
+          y
+        );
+
+      y += 25;
     });
 
-    doc.moveDown();
-    doc.fontSize(12).text('Thank you for choosing FlySphere!', {
-      align: 'center'
-    });
+    /* ================= PAYMENT SUMMARY ================= */
+    y += 10;
+    doc
+      .fontSize(16)
+      .fillColor('#1f3b64')
+      .text('PAYMENT SUMMARY', 40, y);
+
+    y += 20;
+    doc.moveTo(40, y).lineTo(550, y).stroke('#e2e8f0');
+    y += 15;
+
+    const baseAmount = Number(booking.total_amount);
+    const tax = Math.round(baseAmount * 0.12);
+    const convenience = 249;
+    const grand = baseAmount + tax + convenience;
+
+    const rightAlignX = 400;
+
+    doc.fontSize(11).fillColor('#000000');
+    doc.text('Base Fare:', 50, y);
+    doc.text(`Rs. ${baseAmount}`, rightAlignX, y);
+
+    y += 15;
+
+    doc.text('Taxes (12%):', 50, y);
+    doc.text(`Rs. ${tax}`, rightAlignX, y);
+
+    y += 15;
+
+    doc.text('Convenience Fee:', 50, y);
+    doc.text(`Rs. ${convenience}`, rightAlignX, y);
+
+    y += 20;
+
+    doc.moveTo(50, y).lineTo(550, y).stroke('#e2e8f0');
+    y += 10;
+
+    doc.fontSize(14).fillColor('#1f3b64');
+    doc.text('TOTAL PAID:', 50, y);
+    doc.text(`Rs. ${grand}`, rightAlignX, y);
+
+    y += 40;
+
+    /* ================= FOOTER ================= */
+    doc
+      .fontSize(10)
+      .fillColor('#64748b')
+      .text(
+        'Please arrive at the airport at least 2 hours before departure. Carry valid ID proof.\nThank you for choosing FlySphere. Have a pleasant journey!',
+        40,
+        y,
+        { align: 'center', width: 500 }
+      );
 
     doc.end();
 
   } catch (error) {
     console.error('Ticket Generation Error:', error);
     res.status(500).json({ error: 'Failed to generate ticket' });
+  }
+});
+
+/* ✅ Get All Bookings (For Admin Dashboard) */
+router.get('/', async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT * FROM bookings ORDER BY created_at DESC'
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Fetch All Bookings Error:', error);
+    res.status(500).json({ error: 'Failed to fetch bookings' });
   }
 });
 

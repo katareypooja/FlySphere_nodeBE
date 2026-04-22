@@ -66,10 +66,44 @@ export class BookingComponent implements OnInit, AfterViewInit {
       this.contact = state.contact;
     }
 
-    // ✅ Ensure passenger initialization happens after data is fully ready
+    // ✅ Ensure passenger initialization based on search selection (adults + children)
     Promise.resolve().then(() => {
+
       if (this.passengers.length === 0) {
-        this.addPassenger();
+
+        const adults = Number(this.bookingData?.adults) || 0;
+        const children = Number(this.bookingData?.children) || 0;
+
+        // ✅ Generate adult passengers
+        for (let i = 0; i < adults; i++) {
+          this.passengers.push({
+            title: '',
+            firstName: '',
+            lastName: '',
+            dob: '',
+            age: 0,
+            type: 'adult',
+            seatPreference: '',
+            baggage: false,
+            mealPreference: ''
+          });
+        }
+
+        // ✅ Generate child passengers
+        for (let i = 0; i < children; i++) {
+          this.passengers.push({
+            title: '',
+            firstName: '',
+            lastName: '',
+            dob: '',
+            age: 0,
+            type: 'child',
+            seatPreference: '',
+            baggage: false,
+            mealPreference: ''
+          });
+        }
+
       }
     });
   }

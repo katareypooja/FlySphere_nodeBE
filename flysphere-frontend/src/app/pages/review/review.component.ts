@@ -51,6 +51,19 @@ export class ReviewComponent implements OnInit {
 
     if (isRound) {
       payload.return_flight_id = this.bookingData?.return?.flight?.id;
+
+      // ✅ Send separate cabin classes for round trip
+      payload.outbound_cabin_class =
+        this.bookingData?.departure?.fare?.name || 'Economy';
+
+      payload.return_cabin_class =
+        this.bookingData?.return?.fare?.name || 'Economy';
+    } else {
+      // ✅ One way
+      payload.outbound_cabin_class =
+        this.bookingData?.fare?.name ||
+        this.bookingData?.cabinClass ||
+        'Economy';
     }
 
     console.log('🚀 Sending booking payload:', payload);
