@@ -6,7 +6,7 @@ import { BookingNavbarComponent } from '../../shared/booking-navbar/booking-navb
 
 @Component({
   selector: 'app-booking',
-  standalone: true, 
+  standalone: true,
   imports: [CommonModule, FormsModule, BookingNavbarComponent],
   templateUrl: './booking.component.html',
   styleUrls: ['./booking.component.css']
@@ -14,14 +14,11 @@ import { BookingNavbarComponent } from '../../shared/booking-navbar/booking-navb
 export class BookingComponent implements OnInit, AfterViewInit {
 
   bookingData: any = null;
-
   passengers: any[] = [];
   maxPassengers = 4;
 
-  // ✅ Add-ons (Base prices)
   baggagePrice = 799;
   insurancePrice = 199;
-
   travelInsurance = false;
 
   contact = {
@@ -36,77 +33,27 @@ export class BookingComponent implements OnInit, AfterViewInit {
   constructor(private router: Router) {}
 
   ngOnInit(): void {
-  window.scrollTo(0, 0);
+    window.scrollTo(0, 0);
 
-  // ✅ Always hydrate booking data first
-  this.bookingData = history.state?.bookingData;
+    this.bookingData = history.state?.bookingData;
 
-  if (!this.bookingData) {
-    const stored = sessionStorage.getItem('bookingData');
-    if (stored) {
-      this.bookingData = JSON.parse(stored);
+    if (!this.bookingData) {
+      const stored = sessionStorage.getItem('bookingData');
+      if (stored) {
+        this.bookingData = JSON.parse(stored);
+      }
+    } else {
+      sessionStorage.setItem('bookingData', JSON.stringify(this.bookingData));
     }
-  } else {
-    sessionStorage.setItem('bookingData', JSON.stringify(this.bookingData));
-  }
 
-  if (!this.bookingData) {
-    this.router.navigate(['/search']);
-    return;
-  }
+    if (!this.bookingData) {
+      this.router.navigate(['/search']);
+      return;
+    }
 
-  // ✅ Restore passengers & contact if coming back from Review
-  const state = history.state;
-
-  if (state?.passengers && state.passengers.length > 0) {
-    this.passengers = state.passengers;
-  }
-
-  if (state?.contact) {
-    this.contact = state.contact;
-  }
-
-  // ✅ Initialize passengers based on counts from search page
-  Promise.resolve().then(() => {
-    if (this.passengers.length === 0) {
-      const adults = Number(this.bookingData?.adults) || 0;
-      const children = Number(this.bookingData?.children) || 0;
-
-      // create adult passengers
-      for (let i = 0; i < adults; i++) {
-        this.passengers.push({
-          title: '',
-          firstName: '',
-          lastName: '',
-          dob: '',
-          age: 0,
-          type: 'adult',
-          seatPreference: '',
-          baggage: false,
-          mealPreference: ''
-        });
-      }
-
-      // create child passengers
-      for (let i = 0; i < children; i++) {
-        this.passengers.push({
-          title: '',
-          firstName: '',
-          lastName: '',
-          dob: '',
-          age: 0,
-          type: 'child',  // ✅ pre-mark as child so fare block uses childFare
-          seatPreference: '',
-          baggage: false,
-          mealPreference: ''
-        });
-      }
-
-<<<<<<< HEAD
-    // ✅ Restore passengers & contact if coming back from Review
     const state = history.state;
 
-    if (state?.passengers && state.passengers.length > 0) {
+    if (state?.passengers?.length) {
       this.passengers = state.passengers;
     }
 
@@ -114,69 +61,39 @@ export class BookingComponent implements OnInit, AfterViewInit {
       this.contact = state.contact;
     }
 
-    // ✅ Ensure passenger initialization based on search selection (adults + children)
     Promise.resolve().then(() => {
-
-=======
-      // fallback: if somehow counts are zero, keep original behavior
->>>>>>> 503422e617bd7ad01cb1c339913b246702959e76
       if (this.passengers.length === 0) {
-
         const adults = Number(this.bookingData?.adults) || 0;
         const children = Number(this.bookingData?.children) || 0;
 
-        // ✅ Generate adult passengers
         for (let i = 0; i < adults; i++) {
-          this.passengers.push({
-            title: '',
-            firstName: '',
-            lastName: '',
-            dob: '',
-            age: 0,
-            type: 'adult',
-            seatPreference: '',
-            baggage: false,
-            mealPreference: ''
-          });
+          this.passengers.push(this.createPassenger('adult'));
         }
 
-        // ✅ Generate child passengers
         for (let i = 0; i < children; i++) {
-          this.passengers.push({
-            title: '',
-            firstName: '',
-            lastName: '',
-            dob: '',
-            age: 0,
-            type: 'child',
-            seatPreference: '',
-            baggage: false,
-            mealPreference: ''
-          });
+          this.passengers.push(this.createPassenger('child'));
         }
-
       }
-    }
-  });
-}
+    });
+  }
 
-
-  /* ================= PASSENGER ================= */
-
-  addPassenger() {
-    if (this.passengers.length >= this.maxPassengers) return;
-
-    this.passengers.push({
+  private createPassenger(type: 'adult' | 'child') {
+    return {
       title: '',
       firstName: '',
       lastName: '',
       dob: '',
       age: 0,
-      type: 'adult',
+      type,
       seatPreference: '',
       baggage: false,
       mealPreference: ''
-    });
+    };
+  }
+
+  addPassenger() {
+    if (this.passengers.length >= this.maxPassengers) return;
+    this.passengers.push(this.createPassenger('adult'));
   }
 
   removePassenger(index: number) {
@@ -206,76 +123,34 @@ export class BookingComponent implements OnInit, AfterViewInit {
     return this.passengers.filter(p => p.type === 'child').length;
   }
 
-  /* ================= PASSENGER COMPLETION (BASED ON FIRST SCREEN) ================= */
-
   get totalFromSearch(): number {
     const adults = Number(this.bookingData?.adults) || 0;
     const children = Number(this.bookingData?.children) || 0;
     return adults + children;
   }
 
-  get arePassengerDetailsComplete(): boolean {
-    // Number of passenger rows must match number selected on first screen
-    if (this.passengers.length !== this.totalFromSearch) {
-      return false;
-    }
-
-    // Validate passenger fields (aligned with validateBooking)
-    const passengersValid = this.passengers.every(p =>
-      p.firstName &&
-      p.lastName &&
-      p.dob &&
-      p.age &&
-      p.age > 0
-    );
-
-    if (!passengersValid) return false;
-
-    // Validate contact info
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phoneRegex = /^[0-9]{10}$/;
-
-    const contactValid =
-      !!this.contact.email && emailRegex.test(this.contact.email) &&
-      !!this.contact.phone && phoneRegex.test(this.contact.phone);
-
-    return contactValid;
-  }
-
-  /* ================= PRICING ================= */
-
   get baseTotal(): number {
-
-    // ✅ ROUND TRIP
     if (this.bookingData?.tripType === 'round') {
-
       const depAdult = Number(this.bookingData?.departure?.fare?.adultFare) || 0;
       const depChild = Number(this.bookingData?.departure?.fare?.childFare) || 0;
-
       const retAdult = Number(this.bookingData?.return?.fare?.adultFare) || 0;
       const retChild = Number(this.bookingData?.return?.fare?.childFare) || 0;
 
       const adults = Number(this.bookingData?.adults) || 0;
       const children = Number(this.bookingData?.children) || 0;
 
-      const total =
+      return Math.round(
         (depAdult + retAdult) * adults +
-        (depChild + retChild) * children;
-
-      return Math.round(total);
+        (depChild + retChild) * children
+      );
     }
 
-    // ✅ ONE WAY
     const adultFare = Number(this.bookingData?.fare?.adultFare) || 0;
     const childFare = Number(this.bookingData?.fare?.childFare) || 0;
-
     const adults = Number(this.bookingData?.adults) || 0;
     const children = Number(this.bookingData?.children) || 0;
 
-    const total = (adultFare * adults) +
-                  (childFare * children);
-
-    return Math.round(total);
+    return Math.round(adultFare * adults + childFare * children);
   }
 
   getSeatPrice(type: string): number {
@@ -308,41 +183,6 @@ export class BookingComponent implements OnInit, AfterViewInit {
     return Math.round(total);
   }
 
-  /* ✅ Per Passenger Subtotal (Fix for string concatenation issue) */
-  getPassengerSubtotal(p: any): number {
-
-    let fareTotal = 0;
-
-    if (this.bookingData?.tripType === 'round') {
-
-      const depAdult = Number(this.bookingData?.departure?.fare?.adultFare) || 0;
-      const depChild = Number(this.bookingData?.departure?.fare?.childFare) || 0;
-
-      const retAdult = Number(this.bookingData?.return?.fare?.adultFare) || 0;
-      const retChild = Number(this.bookingData?.return?.fare?.childFare) || 0;
-
-      if (p.type === 'adult') {
-        fareTotal = depAdult + retAdult;
-      } else {
-        fareTotal = depChild + retChild;
-      }
-
-    } else {
-
-      const adultFare = Number(this.bookingData?.fare?.adultFare) || 0;
-      const childFare = Number(this.bookingData?.fare?.childFare) || 0;
-
-      fareTotal = p.type === 'adult' ? adultFare : childFare;
-    }
-
-    const addons =
-      this.getSeatPrice(p.seatPreference) +
-      this.getMealPrice(p.mealPreference) +
-      (p.baggage ? this.baggagePrice : 0);
-
-    return Math.round(fareTotal + addons);
-  }
-
   get taxAmount(): number {
     return Math.round((this.baseTotal + this.addonsTotal) * 0.12);
   }
@@ -361,10 +201,6 @@ export class BookingComponent implements OnInit, AfterViewInit {
   }
 
   validateBooking(): boolean {
-
-    // ✅ Track if errors already existed (to prevent repeated shake)
-    const hadErrorsBefore = this.validationErrors.length > 0;
-
     this.validationErrors = [];
     this.formSubmitted = true;
     this.shakeForm = false;
@@ -373,17 +209,23 @@ export class BookingComponent implements OnInit, AfterViewInit {
       this.validationErrors.push('At least one passenger is required.');
     }
 
-    // ✅ Child cannot travel without at least one adult
     if (this.childCount > 0 && this.adultCount === 0) {
       this.validationErrors.push('At least one adult is required to book a child ticket.');
     }
 
     this.passengers.forEach((p, index) => {
-      // ✅ Title is now optional
-      if (!p.firstName) this.validationErrors.push(`Passenger ${index + 1}: Please enter first name.`);
-      if (!p.lastName) this.validationErrors.push(`Passenger ${index + 1}: Please enter last name.`);
-      if (!p.dob) this.validationErrors.push(`Passenger ${index + 1}: Please select date of birth.`);
-      if (!p.age || p.age <= 0) this.validationErrors.push(`Passenger ${index + 1}: Please provide valid date of birth.`);
+      if (!p.firstName) {
+        this.validationErrors.push(`Passenger ${index + 1}: First name is required.`);
+      }
+      if (!p.lastName) {
+        this.validationErrors.push(`Passenger ${index + 1}: Last name is required.`);
+      }
+      if (!p.dob) {
+        this.validationErrors.push(`Passenger ${index + 1}: Date of birth is required.`);
+      }
+      if (!p.age || p.age <= 0) {
+        this.validationErrors.push(`Passenger ${index + 1}: Please provide valid date of birth.`);
+      }
     });
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -397,26 +239,44 @@ export class BookingComponent implements OnInit, AfterViewInit {
     }
 
     if (this.validationErrors.length > 0) {
+      this.shakeForm = true;
 
-      // ✅ Shake only if this is a new error state
-      if (!hadErrorsBefore) {
-        this.shakeForm = true;
-
-        setTimeout(() => {
-          this.shakeForm = false;
-        }, 400);
-      }
-
-      // ✅ Always scroll full page to absolute top
       setTimeout(() => {
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth'
-        });
+        this.shakeForm = false;
+      }, 400);
+
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }, 50);
     }
 
     return this.validationErrors.length === 0;
+  }
+
+  getPassengerSubtotal(p: any): number {
+    let fareTotal = 0;
+
+    if (this.bookingData?.tripType === 'round') {
+      const depAdult = Number(this.bookingData?.departure?.fare?.adultFare) || 0;
+      const depChild = Number(this.bookingData?.departure?.fare?.childFare) || 0;
+      const retAdult = Number(this.bookingData?.return?.fare?.adultFare) || 0;
+      const retChild = Number(this.bookingData?.return?.fare?.childFare) || 0;
+
+      fareTotal = p.type === 'adult'
+        ? depAdult + retAdult
+        : depChild + retChild;
+    } else {
+      const adultFare = Number(this.bookingData?.fare?.adultFare) || 0;
+      const childFare = Number(this.bookingData?.fare?.childFare) || 0;
+      fareTotal = p.type === 'adult' ? adultFare : childFare;
+    }
+
+    const addons =
+      this.getSeatPrice(p.seatPreference) +
+      this.getMealPrice(p.mealPreference) +
+      (p.baggage ? this.baggagePrice : 0);
+
+    return Math.round(fareTotal + addons);
   }
 
   isPassengerFieldInvalid(value: any): boolean {
@@ -440,31 +300,20 @@ export class BookingComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // ✅ Force layout recalculation after Angular navigation (final scroll freeze fix)
     setTimeout(() => {
       window.scrollTo({ top: 0, behavior: 'auto' });
-      document.documentElement.style.overflow = 'auto';
+
       document.body.style.overflow = 'auto';
+      document.documentElement.style.overflow = 'auto';
     }, 0);
-
-      
-
   }
-goBackToSearch(): void {
+
+  goBackToSearch(): void {
     this.router.navigate(['/search']);
   }
+
   confirmBooking() {
-
-    // Safety: if passenger details are not entered as per selection, show popup
-    if (this.passengers.length !== this.totalFromSearch) {
-      alert('Please enter passenger details');
-      return;
-    }
-
-    // If other fields (names, DOB, contact etc.) are invalid, use existing validation flow
-    if (!this.validateBooking()) {
-      return;
-    }
+    if (!this.validateBooking()) return;
 
     this.router.navigate(['/review'], {
       state: {

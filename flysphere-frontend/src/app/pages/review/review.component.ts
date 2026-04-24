@@ -34,74 +34,59 @@ export class ReviewComponent implements OnInit {
     this.totals = state.totals || {};
   }
 
- confirmBooking() {
-  const isRound = this.bookingData?.tripType === 'round';
+  confirmBooking() {
+    const isRound = this.bookingData?.tripType === 'round';
 
-  const outboundFlightId = isRound
-    ? this.bookingData?.departure?.flight?.id
-    : this.bookingData?.flight?.id;
+    const outboundFlightId = isRound
+      ? this.bookingData?.departure?.flight?.id
+      : this.bookingData?.flight?.id;
 
-  // NEW: get selected cabin class from bookingData
-  // Adjust the property name to whatever you actually store
-  const selectedCabinClass =
-    this.bookingData?.selectedCabinClass || this.bookingData?.cabinClass || 'Economy';
+    const payload: any = {
+      user_id: 1, // TODO: replace with actual logged-in user ID
+      outbound_flight_id: outboundFlightId,
+      passengers: this.passengers,
+      total_amount: this.totals?.grandTotal,
+      trip_type: isRound ? 'round' : 'oneway'
+    };
 
-<<<<<<< HEAD
     if (isRound) {
       payload.return_flight_id = this.bookingData?.return?.flight?.id;
 
-      // ✅ Send separate cabin classes for round trip
       payload.outbound_cabin_class =
         this.bookingData?.departure?.fare?.name || 'Economy';
 
       payload.return_cabin_class =
         this.bookingData?.return?.fare?.name || 'Economy';
     } else {
-      // ✅ One way
       payload.outbound_cabin_class =
         this.bookingData?.fare?.name ||
         this.bookingData?.cabinClass ||
         'Economy';
     }
-=======
-  const payload: any = {
-    user_id: 1, // TODO: replace with logged-in user id
-    outbound_flight_id: outboundFlightId,
-    passengers: this.passengers,
-    total_amount: this.totals?.grandTotal,
-    trip_type: this.bookingData?.tripType || (isRound ? 'round' : 'oneway'),
-    cabin_class: selectedCabinClass   // ✅ send correct cabin to backend
-  };
->>>>>>> 503422e617bd7ad01cb1c339913b246702959e76
 
-  if (isRound) {
-    payload.return_flight_id = this.bookingData?.return?.flight?.id;
-  }
+    console.log('🚀 Sending booking payload:', payload);
 
-  console.log('🚀 Sending booking payload:', payload);
+    this.http.post('http://localhost:5000/api/bookings', payload)
+      .subscribe({
+        next: (response: any) => {
+          console.log('✅ Booking API response:', response);
 
-  this.http.post('http://localhost:5000/api/bookings', payload)
-    .subscribe({
-      next: (response: any) => {
-        console.log('✅ Booking API response:', response);
+          if (!response || !response.booking) {
+            alert('Booking succeeded but response format is unexpected.');
+            return;
+          }
 
-        if (!response || !response.booking) {
-          alert('Booking succeeded but response format is unexpected.');
-          return;
+          this.router.navigate([
+            '/confirmation',
+            response.booking.booking_id
+          ]);
+        },
+        error: (error) => {
+          console.error('❌ Booking API failed:', error);
+          alert('Booking failed. Please check backend server or try again.');
         }
-
-        this.router.navigate([
-          '/confirmation',
-          response.booking.booking_id
-        ]);
-      },
-      error: (error) => {
-        console.error('❌ Booking API failed:', error);
-        alert('Booking failed. Please check backend server or try again.');
-      }
-    });
-}
-
+      });
+  }
 
   goBackToBooking() {
     this.router.navigate(['/booking'], {
