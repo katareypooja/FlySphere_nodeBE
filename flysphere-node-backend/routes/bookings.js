@@ -111,42 +111,6 @@ for (let p of passengers) {
   );
 }
 
-/* ======================================
-   2) DECREMENT SEAT COUNTS PER BOOKING
-   ====================================== */
-
-const seatsToBook = Array.isArray(passengers) ? passengers.length : 0;
-
-if (seatsToBook > 0) {
-  // Normalize cabin_class to be more tolerant of frontend naming
-  const rawCabin = cabin_class || 'Economy';
-  const normalized = String(rawCabin).trim().toLowerCase();
-
-  const CABIN_COLUMN_MAP = {
-    // Economy
-    economy: 'TotalEconomySeats',
-    // Business
-    business: 'TotalBusinessSeats',
-    // First / First Class
-    first: 'TotalFirstClassSeats',
-    'first class': 'TotalFirstClassSeats'
-  };
-
-  const columnName = CABIN_COLUMN_MAP[normalized];
-
-  if (!columnName) {
-    throw new Error(`Unsupported cabin_class: ${rawCabin}`);
-  }
-
-  if (outbound_flight_id) {
-    await decrementSeatsForFlight(client, outbound_flight_id, columnName, seatsToBook);
-  }
-
-  if (return_flight_id) {
-    await decrementSeatsForFlight(client, return_flight_id, columnName, seatsToBook);
-  }
-}
-
     /* ======================================
        2) DECREMENT SEAT COUNTS PER BOOKING
        ====================================== */

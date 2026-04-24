@@ -218,7 +218,7 @@
       <div class="details-section">
         <div class="section-title">Passengers</div>
 
-        <ng-container *ngIf="passengers?.length">
+        <ng-container *ngIf="passengers.length">
           <div class="passenger-card" *ngFor="let p of passengers; let i = index">
             <div class="flight-field">
               <span class="flight-label">Passenger {{ i + 1 }}</span>

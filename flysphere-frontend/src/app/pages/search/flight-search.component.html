@@ -232,7 +232,7 @@
 <!-- ✅ ROUND TRIP EMPTY STATES ARE SHOWN INSIDE EACH COLUMN (see below) -->
 
 <!-- ✅ ONE WAY HEADER (Now Inside Results Section) -->
-<div *ngIf="tripType !== 'round' && flights?.length" class="round-header premium-round-header">
+<div *ngIf="tripType !== 'round' && flights.length" class="round-header premium-round-header">
 
   <div class="round-header-badge">
     ✈ One Way Selection
@@ -459,7 +459,7 @@
 
 
     <!-- ✅ ONE WAY LAYOUT -->
-    <div *ngIf="searched && tripType !== 'round' && flights?.length">
+    <div *ngIf="searched && tripType !== 'round' && flights.length">
 
       <div class="flight-card professional-card"
            *ngFor="let f of flights; let i = index"
